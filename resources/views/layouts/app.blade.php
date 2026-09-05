@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Dune ERP') }} @hasSection('title')&mdash; @yield('title')@endif</title>
     @vite(['resources/scss/app.scss', 'resources/js/app.js'])
+    @livewireStyles
     @stack('styles')
 </head>
 <body>
@@ -38,6 +39,24 @@
                 <li class="nav-item">
                     <a href="{{ route('audit.index') }}" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}">
                         Audit
+                    </a>
+                </li>
+                @endcan
+
+                @canany(['orders.view', 'cash.view'])
+                <li class="nav-item mt-3 mb-1 px-2 text-uppercase small text-secondary">Opérations</li>
+                @endcanany
+                @can('orders.view')
+                <li class="nav-item">
+                    <a href="{{ route('orders.index') }}" class="nav-link {{ request()->routeIs('orders.*') ? 'active' : '' }}">
+                        Commandes / POS
+                    </a>
+                </li>
+                @endcan
+                @can('cash.view')
+                <li class="nav-item">
+                    <a href="{{ route('cash-sessions.index') }}" class="nav-link {{ request()->routeIs('cash-sessions.*') ? 'active' : '' }}">
+                        Caisse
                     </a>
                 </li>
                 @endcan
@@ -121,5 +140,6 @@
     </div>
 
     @stack('scripts')
+    @livewireScripts
 </body>
 </html>

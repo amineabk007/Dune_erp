@@ -17,16 +17,16 @@ class RoleSeeder extends Seeder
     public const GRANTS = [
         'direction' => [
             'audit.view', 'reports.view', 'users.view',
-            'orders.view', 'payments.view', 'payments.refund', 'cash.view',
+            'orders.view', 'orders.discount', 'payments.view', 'payments.refund', 'cash.view',
             'stock.view', 'products.view', 'reservations.view',
             'customers.manage', 'events.manage', 'expenses.manage',
             'employees.manage', 'purchases.manage', 'suppliers.manage',
             'recipes.manage', 'categories.manage', 'tables.manage',
         ],
         'manager' => [
-            'orders.view', 'orders.create', 'orders.update', 'orders.cancel',
-            'payments.view', 'payments.create',
-            'cash.view', 'cash.open', 'cash.close',
+            'orders.view', 'orders.create', 'orders.update', 'orders.cancel', 'orders.discount',
+            'payments.view', 'payments.create', 'payments.refund',
+            'cash.view', 'cash.open', 'cash.close', 'cash.movement',
             'stock.view', 'stock.adjust', 'stock.inventory',
             'products.view', 'products.create', 'products.update', 'categories.manage',
             'reservations.view', 'reservations.create', 'reservations.update', 'reservations.cancel',
@@ -38,7 +38,7 @@ class RoleSeeder extends Seeder
         'caissier' => [
             'orders.view', 'orders.create', 'orders.update',
             'payments.view', 'payments.create',
-            'cash.view', 'cash.open', 'cash.close',
+            'cash.view', 'cash.open', 'cash.close', 'cash.movement',
             'reservations.view', 'products.view', 'customers.manage',
         ],
         'serveur' => [

@@ -2,10 +2,15 @@
 
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\CashSessionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderItemController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -37,4 +42,32 @@ Route::middleware('auth')->group(function () {
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('products', ProductController::class);
     Route::resource('customers', CustomerController::class)->except(['show']);
+
+    Route::get('cash-sessions', [CashSessionController::class, 'index'])->name('cash-sessions.index');
+    Route::get('cash-sessions/create', [CashSessionController::class, 'create'])->name('cash-sessions.create');
+    Route::post('cash-sessions', [CashSessionController::class, 'store'])->name('cash-sessions.store');
+    Route::get('cash-sessions/{cashSession}', [CashSessionController::class, 'show'])->name('cash-sessions.show');
+    Route::post('cash-sessions/{cashSession}/movements', [CashSessionController::class, 'storeMovement'])->name('cash-sessions.movements.store');
+    Route::get('cash-sessions/{cashSession}/close', [CashSessionController::class, 'closeForm'])->name('cash-sessions.close-form');
+    Route::post('cash-sessions/{cashSession}/close', [CashSessionController::class, 'close'])->name('cash-sessions.close');
+
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/create', [OrderController::class, 'create'])->name('orders.create');
+    Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('orders/{order}/discount', [OrderController::class, 'discount'])->name('orders.discount');
+    Route::post('orders/{order}/send', [OrderController::class, 'send'])->name('orders.send');
+    Route::post('orders/{order}/serve', [OrderController::class, 'serve'])->name('orders.serve');
+    Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+
+    Route::post('orders/{order}/items', [OrderItemController::class, 'store'])->name('orders.items.store');
+    Route::patch('orders/{order}/items/{item}', [OrderItemController::class, 'update'])->name('orders.items.update');
+    Route::delete('orders/{order}/items/{item}', [OrderItemController::class, 'destroy'])->name('orders.items.destroy');
+    Route::post('orders/{order}/items/{item}/cancel', [OrderItemController::class, 'cancel'])->name('orders.items.cancel');
+
+    Route::post('orders/{order}/payments', [PaymentController::class, 'store'])->name('orders.payments.store');
+    Route::post('payments/{payment}/refund', [PaymentController::class, 'refund'])->name('payments.refund');
+
+    Route::get('orders/{order}/receipt', [ReceiptController::class, 'order'])->name('orders.receipt');
+    Route::get('cash-sessions/{cashSession}/report', [ReceiptController::class, 'cashSession'])->name('cash-sessions.report');
 });

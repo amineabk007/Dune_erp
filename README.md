@@ -26,7 +26,7 @@ statique, pas de bouton factice.
 
 ### Prérequis
 
-- PHP 8.4+ avec extensions `pdo_mysql`, `mbstring`, `bcmath`
+- PHP 8.4+ avec extensions `pdo_mysql`, `mbstring`
 - Composer 2.x
 - Node.js 20+ / npm
 - MySQL 8
@@ -151,11 +151,45 @@ supprimer.
   utilisateurs, gestion des rôles, immutabilité de l'audit) — tous verts
   contre une vraie base MySQL 8.
 
-Modules restants (zones/tables, POS, réservations, cuisine/bar, produits/
-recettes, stock, achats, CRM, événements, dépenses, personnel, rapports)
-seront livrés phase par phase, en suivant le plan de développement du cahier
-des charges (section 25), chacune vérifiée et testée avant de passer à la
-suivante.
+### Phase 2 — Référentiels ✅ Implémentée et testée
+
+- Zones et tables (plan de salle), catégories et produits (avec historique des
+  prix), clients. CRUD complet gardé par permission par action, jamais de
+  suppression quand des données dépendantes existent (zone avec tables,
+  catégorie avec produits).
+- 11 tests supplémentaires (34 au total).
+
+### Phase 3 — POS / Caisse ✅ Implémentée et testée
+
+- Commandes (table ou vente directe), numérotées automatiquement, avec
+  articles ajoutés depuis un catalogue **Livewire** entièrement réactif
+  (recherche, filtre catégorie, +/- quantité, totaux en direct) — sans
+  rechargement de page.
+- Calcul serveur strict du sous-total, de la taxe et du total à chaque
+  modification ; le client ne peut jamais imposer un montant.
+- Remises soumises à permission dédiée (`orders.discount`, réservée aux
+  rôles manager/direction/admin) et tracées dans l'audit avec motif.
+- Paiements multi-moyens (espèces/carte/virement/autre), paiement partiel/
+  fractionné, impossible de dépasser le solde dû. Le paiement complet passe
+  la commande à `paid` et la table à `cleaning`.
+- Remboursements tracés (motif obligatoire), jamais de suppression d'un
+  paiement ou d'une commande payée.
+- Sessions de caisse : une seule session ouverte à la fois, mouvements de
+  caisse (entrée/sortie), clôture avec calcul automatique du montant attendu
+  et de l'écart par rapport au comptage réel.
+- Documents imprimables : addition/reçu par commande, rapport de caisse par
+  session.
+- Toutes les opérations financières (paiement, remboursement, clôture de
+  caisse) sont exécutées dans des transactions de base de données.
+- 22 tests supplémentaires (56 au total), plus une vérification manuelle du
+  parcours complet (ouverture de caisse → commande → ajout d'articles en
+  direct → encaissement → commande soldée) dans un vrai navigateur.
+
+Modules restants (plan de salle visuel/réservations, écrans cuisine/bar,
+recettes, stock, achats, CRM événements, dépenses, personnel, rapports de
+pilotage) seront livrés phase par phase, en suivant le plan de développement
+du cahier des charges (section 25), chacune vérifiée et testée avant de
+passer à la suivante.
 
 ## Licence
 
