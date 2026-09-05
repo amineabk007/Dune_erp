@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\ReservationConfirmedMail;
 use App\Models\Customer;
 use App\Models\Reservation;
 use App\Models\RestaurantTable;
@@ -9,6 +10,7 @@ use App\Models\User;
 use App\Models\Zone;
 use App\Services\ReservationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\Concerns\SeedsRolesAndPermissions;
 use Tests\TestCase;
 
@@ -97,6 +99,46 @@ class ReservationTest extends TestCase
         $this->assertNotNull($reservation->order_id);
         $this->assertSame($this->table->id, $reservation->order->table_id);
         $this->assertSame('occupied', $this->table->fresh()->status);
+    }
+
+    public function test_confirming_a_reservation_emails_the_customer(): void
+    {
+        Mail::fake();
+        $this->customer->update(['email' => 'client@example.test']);
+
+        $reservation = app(ReservationService::class)->create(
+            $this->serveur,
+            $this->customer->id,
+            now()->addHour(),
+            2,
+            [$this->table->id]
+        );
+
+        $this->actingAs($this->serveur)->post("/reservations/{$reservation->id}/confirm")->assertRedirect();
+
+        Mail::assertSent(ReservationConfirmedMail::class, function (ReservationConfirmedMail $mail) use ($reservation) {
+            return $mail->reservation->id === $reservation->id
+                && $mail->hasTo('client@example.test');
+        });
+    }
+
+    public function test_confirming_a_reservation_without_a_customer_email_does_not_error(): void
+    {
+        Mail::fake();
+        $this->customer->update(['email' => null]);
+
+        $reservation = app(ReservationService::class)->create(
+            $this->serveur,
+            $this->customer->id,
+            now()->addHour(),
+            2,
+            [$this->table->id]
+        );
+
+        $this->actingAs($this->serveur)->post("/reservations/{$reservation->id}/confirm")->assertRedirect();
+
+        $this->assertSame('confirmed', $reservation->fresh()->status);
+        Mail::assertNothingSent();
     }
 
     public function test_cancelling_a_reservation_frees_a_reserved_table(): void

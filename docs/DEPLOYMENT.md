@@ -80,7 +80,35 @@ php artisan view:cache
 | `SESSION_SECURE_COOKIE` | `true` — le site est servi en HTTPS, les cookies de session ne doivent jamais transiter en clair |
 | `SESSION_ENCRYPT` | `true` recommandé |
 | `DB_PASSWORD` | Mot de passe fort dédié, différent de tout autre environnement |
-| `MAIL_*` | Configurer un vrai transport si des notifications par e-mail sont ajoutées plus tard |
+| `MAIL_MAILER` | `smtp` (ou tout transport supporté par Laravel) — voir ci-dessous |
+
+## Notifications par e-mail
+
+Deux notifications sont envoyées automatiquement : confirmation de
+réservation au client, et alerte de stock bas aux utilisateurs disposant
+de `stock.adjust`. Par défaut (`.env.example`), `MAIL_MAILER=log` — les
+e-mails sont écrits dans `storage/logs/laravel.log` au lieu d'être
+réellement envoyés, ce qui est volontaire pour le développement et les
+tests (aucun risque d'envoyer un vrai e-mail par accident).
+
+Pour activer l'envoi réel en production, configurer un transport SMTP
+réel dans `.env` :
+
+```
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.votre-fournisseur.com
+MAIL_PORT=587
+MAIL_USERNAME=...
+MAIL_PASSWORD=...
+MAIL_SCHEME=tls
+MAIL_FROM_ADDRESS=reservations@dune-rooftop.ma
+MAIL_FROM_NAME="Dune Rooftop"
+```
+
+Un échec d'envoi (identifiants invalides, serveur SMTP indisponible)
+est journalisé dans les logs applicatifs mais ne bloque jamais l'action
+métier (confirmer une réservation, enregistrer un mouvement de stock
+reste possible même si l'e-mail échoue) — voir `NotificationService`.
 
 ## Serveur web (exemple Nginx)
 

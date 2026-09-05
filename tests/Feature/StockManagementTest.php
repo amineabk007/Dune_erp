@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Mail\LowStockAlertMail;
 use App\Models\Ingredient;
 use App\Models\User;
 use App\Services\StockService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\Concerns\SeedsRolesAndPermissions;
 use Tests\TestCase;
 
@@ -114,6 +116,29 @@ class StockManagementTest extends TestCase
         $this->actingAs($cuisine)->post('/ingredients', [
             'name' => 'X', 'unit' => 'kg', 'current_stock' => 1, 'minimum_stock' => 1, 'unit_cost' => 1,
         ])->assertForbidden();
+    }
+
+    public function test_crossing_below_minimum_stock_sends_an_alert_to_stock_adjust_holders(): void
+    {
+        Mail::fake();
+        $ingredient = Ingredient::factory()->create(['name' => 'Farine', 'current_stock' => 10, 'minimum_stock' => 5]);
+
+        app(StockService::class)->adjust($ingredient, $this->stockUser, -6, 'Casse');
+
+        $this->assertSame('4.000', (string) $ingredient->fresh()->current_stock);
+        Mail::assertSent(LowStockAlertMail::class, function (LowStockAlertMail $mail) use ($ingredient) {
+            return $mail->ingredient->id === $ingredient->id && $mail->hasTo($this->stockUser->email);
+        });
+    }
+
+    public function test_further_movements_while_still_low_do_not_resend_the_alert(): void
+    {
+        Mail::fake();
+        $ingredient = Ingredient::factory()->create(['current_stock' => 3, 'minimum_stock' => 5]);
+
+        app(StockService::class)->adjust($ingredient, $this->stockUser, -1, 'Casse');
+
+        Mail::assertNothingSent();
     }
 
     public function test_stock_movements_are_immutable(): void

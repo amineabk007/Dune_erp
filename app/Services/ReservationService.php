@@ -15,6 +15,7 @@ class ReservationService
     public function __construct(
         private readonly AuditService $audit,
         private readonly OrderService $orders,
+        private readonly NotificationService $notifications,
     ) {}
 
     /**
@@ -95,7 +96,7 @@ class ReservationService
             throw new DomainException("Transition de statut invalide : {$reservation->status} → {$status}.");
         }
 
-        return DB::transaction(function () use ($reservation, $status) {
+        $reservation = DB::transaction(function () use ($reservation, $status) {
             $old = $reservation->only(['status']);
             $reservation->update(['status' => $status]);
 
@@ -119,6 +120,12 @@ class ReservationService
 
             return $reservation->fresh();
         });
+
+        if ($status === 'confirmed') {
+            $this->notifications->reservationConfirmed($reservation->load('customer'));
+        }
+
+        return $reservation;
     }
 
     /**

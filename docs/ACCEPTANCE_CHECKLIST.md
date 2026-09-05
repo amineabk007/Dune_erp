@@ -105,13 +105,29 @@ phase.
       deux règles sont appliquées même pour un acteur `admin`, qui
       contourne pourtant les permissions ordinaires.
 
+## Notifications (V1.2)
+
+- [x] Confirmation de réservation par e-mail au client (si une adresse
+      est renseignée), envoyée automatiquement au passage au statut
+      `confirmed`.
+- [x] Alerte de stock bas par e-mail à tous les utilisateurs disposant de
+      `stock.adjust`, déclenchée une seule fois au moment où l'ingrédient
+      franchit son seuil minimum (pas de spam à chaque mouvement suivant
+      tant qu'il reste bas).
+- [x] Un échec d'envoi (SMTP indisponible, etc.) est journalisé mais
+      n'interrompt jamais l'action métier sous-jacente (confirmer une
+      réservation ou enregistrer un mouvement de stock reste possible
+      même si l'e-mail ne part pas).
+
 ## Hors périmètre V1 (assumé, à considérer pour une V2)
 
 Ces points ont été identifiés pendant le développement mais
 délibérément laissés hors du périmètre V1 pour rester fidèle au cahier
 des charges initial sans sur-ingénierie :
 
-- Notifications par e-mail/SMS (aucun transport mail configuré en V1).
+- Notifications par SMS (les notifications par e-mail sont livrées en
+  V1.2 ; le SMS nécessiterait un compte chez un fournisseur tiers comme
+  Twilio, non inclus).
 - Application mobile native (l'interface Bootstrap est responsive mais
   pensée pour un usage tablette/desktop en salle et en cuisine).
 - Comptabilité d'engagement complète ou export vers un logiciel

@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class StockService
 {
-    public function __construct(private readonly AuditService $audit) {}
+    public function __construct(
+        private readonly AuditService $audit,
+        private readonly NotificationService $notifications,
+    ) {}
 
     /**
      * Record a stock movement and apply its signed delta to the ingredient's
@@ -28,8 +31,11 @@ class StockService
         ?string $reference = null,
         ?float $unitCost = null,
     ): StockMovement {
-        return DB::transaction(function () use ($ingredient, $type, $quantityDelta, $user, $reason, $reference, $unitCost) {
+        $becameLowStock = false;
+
+        $movement = DB::transaction(function () use ($ingredient, $type, $quantityDelta, $user, $reason, $reference, $unitCost, &$becameLowStock) {
             $ingredient = Ingredient::lockForUpdate()->findOrFail($ingredient->id);
+            $wasLowStock = (float) $ingredient->current_stock <= (float) $ingredient->minimum_stock;
 
             $movement = StockMovement::create([
                 'ingredient_id' => $ingredient->id,
@@ -52,8 +58,18 @@ class StockService
                 ], $reason);
             }
 
+            // Alert only on the transition into low stock, not on every
+            // subsequent movement while it stays low, to avoid spamming.
+            $becameLowStock = ! $wasLowStock && (float) $ingredient->current_stock <= (float) $ingredient->minimum_stock;
+
             return $movement;
         });
+
+        if ($becameLowStock) {
+            $this->notifications->lowStockAlert($ingredient->fresh());
+        }
+
+        return $movement;
     }
 
     /**

@@ -399,6 +399,36 @@ POS comme dans la fiche produit.
   pendant les tests), plus une vérification manuelle en navigateur de
   l'upload et de son affichage dans le catalogue POS.
 
+### Phase 13 — Notifications par e-mail ✅ Implémentée et testée
+
+Extension post-V1 : prévenir automatiquement le client et l'équipe
+plutôt que de compter sur une vérification manuelle des écrans.
+
+- **Confirmation de réservation** : dès qu'une réservation passe au
+  statut `confirmed`, le client reçoit un e-mail (s'il a une adresse
+  enregistrée) avec la date, l'heure et le nombre de couverts.
+- **Alerte de stock bas** : dès qu'un mouvement de stock fait franchir à
+  un ingrédient son seuil minimum, un e-mail est envoyé à tous les
+  utilisateurs disposant de `stock.adjust` (manager, stock, direction,
+  admin). L'alerte ne part qu'une seule fois au moment du franchissement
+  — les mouvements suivants pendant que le stock reste bas ne renvoient
+  pas d'e-mail.
+- Un échec d'envoi (SMTP indisponible) est journalisé mais **n'interrompt
+  jamais l'action métier** sous-jacente — confirmer une réservation ou
+  enregistrer un mouvement de stock reste possible même si l'e-mail
+  échoue (`NotificationService::send()`).
+- Par défaut, `MAIL_MAILER=log` écrit les e-mails dans
+  `storage/logs/laravel.log` au lieu de les envoyer réellement — aucun
+  risque d'envoi accidentel en développement ou pendant les tests ; voir
+  `docs/DEPLOYMENT.md` pour activer un vrai transport SMTP en
+  production. Les SMS restent hors périmètre (nécessiteraient un
+  fournisseur tiers type Twilio).
+- 4 tests supplémentaires (125 au total, tous verts contre MySQL réel,
+  utilisant `Mail::fake()`), plus une vérification manuelle de bout en
+  bout en navigateur confirmant que l'e-mail de réservation et l'alerte
+  de stock bas sont bien écrits dans les logs avec le bon destinataire
+  et le bon contenu.
+
 ## Licence
 
 Projet propriétaire — Dune Rooftop Marrakech.
