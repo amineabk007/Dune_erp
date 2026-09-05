@@ -2,9 +2,14 @@
 
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ZoneController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard');
@@ -26,4 +31,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('roles/{role}', [RoleController::class, 'update'])->name('roles.update');
 
     Route::get('audit', [AuditLogController::class, 'index'])->name('audit.index');
+
+    Route::resource('zones', ZoneController::class)->except(['show']);
+    Route::resource('tables', RestaurantTableController::class)->except(['show'])->parameters(['tables' => 'table']);
+    Route::resource('categories', CategoryController::class)->except(['show']);
+    Route::resource('products', ProductController::class);
+    Route::resource('customers', CustomerController::class)->except(['show']);
 });

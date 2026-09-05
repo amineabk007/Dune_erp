@@ -1,0 +1,21 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Zone;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Zone>
+ */
+class ZoneFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'name' => fake()->unique()->randomElement(['Terrasse', 'Intérieur', 'Salle 1er étage', 'Rooftop', 'Bar']),
+            'description' => fake()->optional()->sentence(),
+            'is_active' => true,
+        ];
+    }
+}

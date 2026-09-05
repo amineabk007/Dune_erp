@@ -41,6 +41,43 @@
                     </a>
                 </li>
                 @endcan
+
+                @canany(['tables.manage', 'categories.manage', 'products.view', 'customers.manage'])
+                <li class="nav-item mt-3 mb-1 px-2 text-uppercase small text-secondary">Référentiels</li>
+                @endcanany
+                @can('tables.manage')
+                <li class="nav-item">
+                    <a href="{{ route('zones.index') }}" class="nav-link {{ request()->routeIs('zones.*') ? 'active' : '' }}">
+                        Zones
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('tables.index') }}" class="nav-link {{ request()->routeIs('tables.*') ? 'active' : '' }}">
+                        Tables
+                    </a>
+                </li>
+                @endcan
+                @can('categories.manage')
+                <li class="nav-item">
+                    <a href="{{ route('categories.index') }}" class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                        Catégories
+                    </a>
+                </li>
+                @endcan
+                @can('products.view')
+                <li class="nav-item">
+                    <a href="{{ route('products.index') }}" class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
+                        Produits
+                    </a>
+                </li>
+                @endcan
+                @can('customers.manage')
+                <li class="nav-item">
+                    <a href="{{ route('customers.index') }}" class="nav-link {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+                        Clients
+                    </a>
+                </li>
+                @endcan
             </ul>
         </nav>
 
