@@ -7,6 +7,7 @@ use App\Http\Controllers\CashSessionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FloorPlanController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\KitchenController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\RoleController;
@@ -117,4 +119,8 @@ Route::middleware('auth')->group(function () {
     Route::get('purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
     Route::post('purchases/{purchase}/receive', [PurchaseController::class, 'receive'])->name('purchases.receive');
     Route::post('purchases/{purchase}/cancel', [PurchaseController::class, 'cancel'])->name('purchases.cancel');
+
+    Route::resource('expenses', ExpenseController::class)->except(['destroy', 'show']);
+
+    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
 });

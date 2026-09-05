@@ -244,10 +244,31 @@ supprimer.
   commande → réception, avec mise à jour du stock et du coût observée en
   direct.
 
-Modules restants (CRM événements, dépenses, personnel, rapports de
-pilotage) seront livrés phase par phase, en suivant le plan de
-développement du cahier des charges (section 25), chacune vérifiée et
-testée avant de passer à la suivante.
+### Phase 7 — Finance ✅ Implémentée et testée
+
+- Dépenses manuelles (catégorie, description, montant, date, mode de
+  paiement, fournisseur optionnel) avec journal d'audit sur chaque
+  création/modification ; pas de suppression, seulement une correction
+  tracée.
+- Rapports (période filtrable) : chiffre d'affaires réellement encaissé
+  (basé sur les paiements non remboursés, ventilé par mode de paiement),
+  nombre de commandes payées et ticket moyen, produits les plus vendus,
+  dépenses par catégorie, et un résultat net simplifié (CA encaissé −
+  dépenses − achats réceptionnés sur la période). C'est une approximation
+  V1 volontairement simple, documentée comme telle dans le code — pas de
+  comptabilité d'engagement ni de coût matière consommé au réel.
+- Tableau de bord avec KPIs réels pour les rôles ayant `reports.view` : CA
+  du jour, commandes en cours, occupation des tables, alertes de stock bas,
+  statut de la session de caisse en cours.
+- 9 tests supplémentaires (98 au total, tous verts contre MySQL réel), plus
+  une vérification manuelle en navigateur du tableau de bord, de la
+  création d'une dépense et de l'écran de rapports avec des données réelles
+  (commande payée, dépense), et de l'accès refusé (403) pour un rôle sans
+  `reports.view`.
+
+Modules restants (CRM événements, personnel) seront livrés phase par
+phase, en suivant le plan de développement du cahier des charges
+(section 25), chacune vérifiée et testée avant de passer à la suivante.
 
 ## Licence
 

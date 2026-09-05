@@ -160,6 +160,24 @@
                     </a>
                 </li>
                 @endcan
+
+                @canany(['expenses.manage', 'reports.view'])
+                <li class="nav-item mt-3 mb-1 px-2 text-uppercase small text-secondary">Finance</li>
+                @endcanany
+                @can('expenses.manage')
+                <li class="nav-item">
+                    <a href="{{ route('expenses.index') }}" class="nav-link {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
+                        Dépenses
+                    </a>
+                </li>
+                @endcan
+                @can('reports.view')
+                <li class="nav-item">
+                    <a href="{{ route('reports.index') }}" class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
+                        Rapports
+                    </a>
+                </li>
+                @endcan
             </ul>
         </nav>
 
