@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class PaymentService
 {
-    public function __construct(private readonly AuditService $audit) {}
+    public function __construct(
+        private readonly AuditService $audit,
+        private readonly StockService $stock,
+    ) {}
 
     public function recordPayment(
         Order $order,
@@ -49,6 +52,8 @@ class PaymentService
                 'reference' => $reference,
             ]);
 
+            $wasAlreadyPaid = $order->status === 'paid';
+
             $newAmountPaid = round((float) $order->amount_paid + $amount, 2);
             $order->amount_paid = $newAmountPaid;
 
@@ -60,6 +65,11 @@ class PaymentService
 
             if ($order->status === 'paid' && $order->table_id) {
                 $order->table->update(['status' => 'cleaning']);
+            }
+
+            // Ingredients are only consumed once, the moment the sale is finalized.
+            if ($order->status === 'paid' && ! $wasAlreadyPaid) {
+                $this->stock->consumeForOrder($order, $user);
             }
 
             $this->audit->log('create', 'payments', $payment, null, $payment->only(['method', 'amount', 'order_id']));

@@ -8,15 +8,18 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FloorPlanController;
+use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\KitchenController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ZoneController;
 use Illuminate\Support\Facades\Route;
@@ -94,4 +97,13 @@ Route::middleware('auth')->group(function () {
     Route::post('reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
     Route::post('reservations/{reservation}/no-show', [ReservationController::class, 'noShow'])->name('reservations.no-show');
     Route::post('reservations/{reservation}/create-order', [ReservationController::class, 'createOrder'])->name('reservations.create-order');
+
+    Route::resource('ingredients', IngredientController::class)->except(['destroy']);
+    Route::post('ingredients/{ingredient}/adjust', [IngredientController::class, 'adjust'])->name('ingredients.adjust');
+    Route::post('ingredients/{ingredient}/inventory', [IngredientController::class, 'inventory'])->name('ingredients.inventory');
+
+    Route::resource('recipes', RecipeController::class);
+
+    Route::get('stock/movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
+    Route::get('stock/alerts', [StockMovementController::class, 'alerts'])->name('stock-movements.alerts');
 });

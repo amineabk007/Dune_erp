@@ -205,10 +205,33 @@ supprimer.
   navigateur du parcours commande → envoi cuisine → écran cuisine → passage
   en préparation, en direct sans rechargement de page.
 
-Modules restants (recettes, stock, achats, CRM événements, dépenses,
-personnel, rapports de pilotage) seront livrés phase par phase, en suivant
-le plan de développement du cahier des charges (section 25), chacune
-vérifiée et testée avant de passer à la suivante.
+### Phase 5 — Stock ✅ Implémentée et testée
+
+- Fiches ingrédients (unité, stock actuel, minimum, coût unitaire) avec
+  ledger de mouvements immuable (`stock_movements`) : chaque changement de
+  stock — ouverture, ajustement, casse, retour, transfert, consommation
+  vente — est un enregistrement séparé et traçable ; le stock ne se modifie
+  jamais silencieusement par simple édition du formulaire.
+- Recettes / fiches techniques par produit (ingrédients + quantités +
+  rendement) avec calcul automatique du coût matière par portion, comparé
+  au prix de vente.
+- **Vente → consommation stock** : au moment où une commande est
+  intégralement payée, les ingrédients de chaque article vendu (selon sa
+  recette et son rendement) sont automatiquement décrémentés et
+  enregistrés comme mouvement `sale_consumption` — exactement le critère
+  d'acceptation du cahier des charges. Les articles annulés ne consomment
+  rien.
+- Inventaire physique (correction tracée vers la quantité comptée) et
+  alertes de stock bas (liste des ingrédients à ou sous leur minimum).
+- 11 tests supplémentaires (81 au total, tous verts contre MySQL réel),
+  plus une vérification manuelle en navigateur de la création d'ingrédient,
+  de la création de recette (ajout/suppression dynamique de lignes) et de
+  l'affichage du coût matière.
+
+Modules restants (achats/fournisseurs, CRM événements, dépenses, personnel,
+rapports de pilotage) seront livrés phase par phase, en suivant le plan de
+développement du cahier des charges (section 25), chacune vérifiée et
+testée avant de passer à la suivante.
 
 ## Licence
 

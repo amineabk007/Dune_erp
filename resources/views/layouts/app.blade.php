@@ -123,6 +123,29 @@
                     </a>
                 </li>
                 @endcan
+
+                @canany(['stock.view', 'recipes.manage'])
+                <li class="nav-item mt-3 mb-1 px-2 text-uppercase small text-secondary">Stock</li>
+                @endcanany
+                @can('stock.view')
+                <li class="nav-item">
+                    <a href="{{ route('ingredients.index') }}" class="nav-link {{ request()->routeIs('ingredients.*') ? 'active' : '' }}">
+                        Ingrédients
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('stock-movements.index') }}" class="nav-link {{ request()->routeIs('stock-movements.*') ? 'active' : '' }}">
+                        Mouvements de stock
+                    </a>
+                </li>
+                @endcan
+                @can('recipes.manage')
+                <li class="nav-item">
+                    <a href="{{ route('recipes.index') }}" class="nav-link {{ request()->routeIs('recipes.*') ? 'active' : '' }}">
+                        Recettes
+                    </a>
+                </li>
+                @endcan
             </ul>
         </nav>
 
