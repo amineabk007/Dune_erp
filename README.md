@@ -378,6 +378,27 @@ toucher au code.
   plus une vérification manuelle en navigateur confirmant que le bouton
   de suppression n'apparaît que pour les rôles sans utilisateur assigné.
 
+### Phase 12 — Photos des plats ✅ Implémentée et testée
+
+Extension post-V1 : donner un visage aux produits, dans le catalogue
+POS comme dans la fiche produit.
+
+- Upload d'une photo par produit (JPG/PNG/WebP, 2 Mo max) depuis l'écran
+  Produits, avec remplacement ou retrait possible. Le fichier est stocké
+  sur le disque `public` (`storage/app/public/products`), servi via le
+  lien symbolique `public/storage` — voir `docs/DEPLOYMENT.md`.
+- La photo s'affiche partout où le produit apparaît visuellement : la
+  liste des produits, la fiche produit, et surtout les cartes du
+  catalogue dans l'écran de prise de commande (POS) — c'est là que
+  serveurs et caissiers en profitent le plus au quotidien. Un produit
+  sans photo affiche un espace réservé neutre plutôt qu'une case vide.
+- Remplacer ou retirer une photo supprime l'ancien fichier du disque
+  (pas de fichiers orphelins qui s'accumulent).
+- 3 tests supplémentaires (121 au total, tous verts contre MySQL réel,
+  utilisant `Storage::fake()` pour ne jamais toucher au disque réel
+  pendant les tests), plus une vérification manuelle en navigateur de
+  l'upload et de son affichage dans le catalogue POS.
+
 ## Licence
 
 Projet propriétaire — Dune Rooftop Marrakech.

@@ -31,6 +31,22 @@
     @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
 </div>
 
+<div class="mb-3">
+    <label for="photo" class="form-label">Photo du plat</label>
+    @if (($product->photo_url ?? null))
+        <div class="mb-2">
+            <img src="{{ $product->photo_url }}" alt="{{ $product->name }}" style="max-width: 160px; max-height: 160px; object-fit: cover;" class="rounded border d-block">
+        </div>
+        <div class="form-check mb-2">
+            <input type="checkbox" name="remove_photo" value="1" id="remove_photo" class="form-check-input">
+            <label for="remove_photo" class="form-check-label small">Retirer la photo actuelle</label>
+        </div>
+    @endif
+    <input id="photo" name="photo" type="file" accept="image/png,image/jpeg,image/webp" class="form-control @error('photo') is-invalid @enderror">
+    <div class="form-text">JPG, PNG ou WebP, 2 Mo maximum.</div>
+    @error('photo') <div class="invalid-feedback">{{ $message }}</div> @enderror
+</div>
+
 <div class="row">
     <div class="col mb-3">
         <label for="price" class="form-label">Prix de vente (DH)</label>

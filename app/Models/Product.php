@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['category_id', 'sku', 'name', 'description', 'price', 'tax_rate', 'is_active'];
+    protected $fillable = ['category_id', 'sku', 'name', 'description', 'photo_path', 'price', 'tax_rate', 'is_active'];
 
     protected function casts(): array
     {
@@ -21,6 +23,11 @@ class Product extends Model
             'tax_rate' => 'decimal:2',
             'is_active' => 'boolean',
         ];
+    }
+
+    protected function photoUrl(): Attribute
+    {
+        return Attribute::get(fn () => $this->photo_path ? Storage::disk('public')->url($this->photo_path) : null);
     }
 
     public function category(): BelongsTo

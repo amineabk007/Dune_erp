@@ -30,6 +30,7 @@
     <table class="table table-striped bg-white align-middle">
         <thead>
             <tr>
+                <th></th>
                 <th>SKU</th>
                 <th>Nom</th>
                 <th>Catégorie</th>
@@ -42,6 +43,13 @@
         <tbody>
             @foreach ($products as $product)
                 <tr>
+                    <td>
+                        @if ($product->photo_url)
+                            <img src="{{ $product->photo_url }}" alt="{{ $product->name }}" style="width: 40px; height: 40px; object-fit: cover;" class="rounded border">
+                        @else
+                            <div class="bg-light border rounded" style="width: 40px; height: 40px;"></div>
+                        @endif
+                    </td>
                     <td>{{ $product->sku }}</td>
                     <td><a href="{{ route('products.show', $product) }}">{{ $product->name }}</a></td>
                     <td>{{ $product->category->name }}</td>

@@ -39,12 +39,19 @@ php artisan key:generate
 
 ```bash
 php artisan migrate --force
+php artisan storage:link
 php artisan db:seed --class=PermissionSeeder --force
 php artisan db:seed --class=RoleSeeder --force
 # Ne PAS lancer UserSeeder ni ReferenceDataSeeder en production : ce sont
 # des données de démonstration (comptes "@dune-erp.test", produits fictifs).
 # Créer les vrais comptes via l'écran Utilisateurs une fois connecté en admin.
 ```
+
+`storage:link` crée le lien symbolique `public/storage` → `storage/app/public`,
+nécessaire pour que les photos de produits uploadées depuis l'écran
+Produits soient servies par le serveur web. À relancer après chaque
+nouveau déploiement si le lien n'existe pas déjà (il n'est pas versionné
+dans git).
 
 Créer un premier compte admin directement en base (aucun compte
 n'existe encore pour se connecter à l'écran Utilisateurs) :

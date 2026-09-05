@@ -58,9 +58,16 @@
                                 @forelse ($this->products as $product)
                                     <div class="col">
                                         <button type="button" wire:click="addProduct({{ $product->id }})"
-                                                class="btn btn-outline-secondary w-100 h-100 text-start p-2">
-                                            <div class="fw-semibold small">{{ $product->name }}</div>
-                                            <div class="text-muted small">{{ number_format($product->price, 2) }} DH</div>
+                                                class="btn btn-outline-secondary w-100 h-100 text-start p-2 d-flex gap-2 align-items-center">
+                                            @if ($product->photo_url)
+                                                <img src="{{ $product->photo_url }}" alt="" style="width: 40px; height: 40px; object-fit: cover;" class="rounded flex-shrink-0">
+                                            @else
+                                                <div class="bg-light rounded flex-shrink-0" style="width: 40px; height: 40px;"></div>
+                                            @endif
+                                            <div>
+                                                <div class="fw-semibold small">{{ $product->name }}</div>
+                                                <div class="text-muted small">{{ number_format($product->price, 2) }} DH</div>
+                                            </div>
                                         </button>
                                     </div>
                                 @empty

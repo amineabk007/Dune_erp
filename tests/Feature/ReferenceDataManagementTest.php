@@ -8,6 +8,8 @@ use App\Models\RestaurantTable;
 use App\Models\User;
 use App\Models\Zone;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\Concerns\SeedsRolesAndPermissions;
 use Tests\TestCase;
 
@@ -116,6 +118,76 @@ class ReferenceDataManagementTest extends TestCase
 
         $product = Product::where('sku', 'TAJ-001')->firstOrFail();
         $this->assertSame('120.00', (string) $product->price);
+    }
+
+    public function test_uploading_a_product_photo_stores_it_and_exposes_a_url(): void
+    {
+        Storage::fake('public');
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($this->manager)->post('/products', [
+            'category_id' => $category->id,
+            'sku' => 'PHOTO-001',
+            'name' => 'Tajine avec photo',
+            'price' => 90,
+            'tax_rate' => 20,
+            'photo' => UploadedFile::fake()->image('tajine.jpg'),
+        ]);
+        $response->assertRedirect('/products');
+
+        $product = Product::where('sku', 'PHOTO-001')->firstOrFail();
+        $this->assertNotNull($product->photo_path);
+        Storage::disk('public')->assertExists($product->photo_path);
+        $this->assertStringContainsString($product->photo_path, $product->photo_url);
+    }
+
+    public function test_replacing_a_product_photo_deletes_the_old_file(): void
+    {
+        Storage::fake('public');
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
+            'category_id' => $category->id,
+            'photo_path' => 'products/old.jpg',
+        ]);
+        Storage::disk('public')->put('products/old.jpg', 'fake-content');
+
+        $this->actingAs($this->manager)->put("/products/{$product->id}", [
+            'category_id' => $category->id,
+            'sku' => $product->sku,
+            'name' => $product->name,
+            'price' => $product->price,
+            'tax_rate' => $product->tax_rate,
+            'photo' => UploadedFile::fake()->image('new.jpg'),
+        ])->assertRedirect('/products');
+
+        $product->refresh();
+        Storage::disk('public')->assertMissing('products/old.jpg');
+        Storage::disk('public')->assertExists($product->photo_path);
+        $this->assertNotSame('products/old.jpg', $product->photo_path);
+    }
+
+    public function test_removing_a_product_photo_clears_it_and_deletes_the_file(): void
+    {
+        Storage::fake('public');
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
+            'category_id' => $category->id,
+            'photo_path' => 'products/old.jpg',
+        ]);
+        Storage::disk('public')->put('products/old.jpg', 'fake-content');
+
+        $this->actingAs($this->manager)->put("/products/{$product->id}", [
+            'category_id' => $category->id,
+            'sku' => $product->sku,
+            'name' => $product->name,
+            'price' => $product->price,
+            'tax_rate' => $product->tax_rate,
+            'remove_photo' => '1',
+        ])->assertRedirect('/products');
+
+        $product->refresh();
+        $this->assertNull($product->photo_path);
+        Storage::disk('public')->assertMissing('products/old.jpg');
     }
 
     public function test_a_category_with_products_cannot_be_deleted(): void
