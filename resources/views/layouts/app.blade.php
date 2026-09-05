@@ -146,6 +146,20 @@
                     </a>
                 </li>
                 @endcan
+                @can('purchases.manage')
+                <li class="nav-item">
+                    <a href="{{ route('purchases.index') }}" class="nav-link {{ request()->routeIs('purchases.*') ? 'active' : '' }}">
+                        Achats
+                    </a>
+                </li>
+                @endcan
+                @can('suppliers.manage')
+                <li class="nav-item">
+                    <a href="{{ route('suppliers.index') }}" class="nav-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
+                        Fournisseurs
+                    </a>
+                </li>
+                @endcan
             </ul>
         </nav>
 

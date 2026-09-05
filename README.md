@@ -228,8 +228,24 @@ supprimer.
   de la création de recette (ajout/suppression dynamique de lignes) et de
   l'affichage du coût matière.
 
-Modules restants (achats/fournisseurs, CRM événements, dépenses, personnel,
-rapports de pilotage) seront livrés phase par phase, en suivant le plan de
+### Phase 6 — Achats & fournisseurs ✅ Implémentée et testée
+
+- Fiches fournisseurs (contact, coordonnées, actif/inactif) et commandes
+  d'achat multi-lignes (ingrédient, quantité, coût unitaire) avec calcul
+  automatique du montant total.
+- Cycle de statut d'une commande : `ordered` → `received` (réception qui
+  entre chaque ligne en stock via un mouvement `purchase` par ingrédient et
+  met à jour le coût unitaire de l'ingrédient au dernier prix d'achat) ou
+  `cancelled` (impossible une fois la commande réceptionnée — l'entrée en
+  stock qu'elle a générée reste définitive et tracée).
+- Chaque création, réception et annulation de commande est auditée.
+- 8 tests supplémentaires (89 au total, tous verts contre MySQL réel), plus
+  une vérification manuelle en navigateur du parcours complet fournisseur →
+  commande → réception, avec mise à jour du stock et du coût observée en
+  direct.
+
+Modules restants (CRM événements, dépenses, personnel, rapports de
+pilotage) seront livrés phase par phase, en suivant le plan de
 développement du cahier des charges (section 25), chacune vérifiée et
 testée avant de passer à la suivante.
 

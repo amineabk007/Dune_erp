@@ -14,12 +14,14 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StockMovementController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ZoneController;
 use Illuminate\Support\Facades\Route;
@@ -106,4 +108,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('stock/movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
     Route::get('stock/alerts', [StockMovementController::class, 'alerts'])->name('stock-movements.alerts');
+
+    Route::resource('suppliers', SupplierController::class)->except(['destroy']);
+
+    Route::get('purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+    Route::get('purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+    Route::post('purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+    Route::get('purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
+    Route::post('purchases/{purchase}/receive', [PurchaseController::class, 'receive'])->name('purchases.receive');
+    Route::post('purchases/{purchase}/cancel', [PurchaseController::class, 'cancel'])->name('purchases.cancel');
 });
