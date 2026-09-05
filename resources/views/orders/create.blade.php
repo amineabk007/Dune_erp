@@ -12,7 +12,7 @@
                     <select id="table_id" name="table_id" class="form-select @error('table_id') is-invalid @enderror">
                         <option value="">— Vente directe —</option>
                         @foreach ($tables as $table)
-                            <option value="{{ $table->id }}" {{ (string) old('table_id') === (string) $table->id ? 'selected' : '' }}>
+                            <option value="{{ $table->id }}" {{ (string) old('table_id', request('table_id')) === (string) $table->id ? 'selected' : '' }}>
                                 {{ $table->zone->name }} — {{ $table->name }} ({{ $table->capacity }} pers.)
                             </option>
                         @endforeach

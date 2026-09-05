@@ -135,6 +135,36 @@ class OrderService
         });
     }
 
+    /**
+     * Kitchen/bar screens moving an item through its own lifecycle
+     * (sent → preparing → ready → served), independent of the order's
+     * overall status which the server manages from the POS screen.
+     */
+    public function advanceItemStatus(OrderItem $item, string $status): OrderItem
+    {
+        $allowed = [
+            'sent' => ['preparing'],
+            'preparing' => ['ready'],
+            'ready' => ['served'],
+        ];
+
+        if ($item->order->status === 'cancelled') {
+            throw new DomainException('Cette commande est annulée.');
+        }
+
+        if (! in_array($status, $allowed[$item->status] ?? [], true)) {
+            throw new DomainException("Transition invalide : {$item->status} → {$status}.");
+        }
+
+        $item->update([
+            'status' => $status,
+            'status_changed_at' => now(),
+            'status_changed_by' => auth()->id(),
+        ]);
+
+        return $item->fresh();
+    }
+
     public function recalculateTotals(Order $order): Order
     {
         $items = $order->items()->where('status', '!=', 'cancelled')->get();
@@ -240,6 +270,34 @@ class OrderService
             }
 
             $this->audit->log('cancel', 'orders', $order, $old, ['status' => 'cancelled'], $reason);
+
+            return $order->fresh();
+        });
+    }
+
+    /**
+     * Move an open order from its current table to another available one
+     * (e.g. seating a party at a bigger table).
+     */
+    public function transferTable(Order $order, RestaurantTable $newTable): Order
+    {
+        $this->assertEditable($order);
+
+        if (! in_array($newTable->status, ['available', 'reserved'], true)) {
+            throw new DomainException("La table de destination n'est pas disponible.");
+        }
+
+        return DB::transaction(function () use ($order, $newTable) {
+            $oldTable = $order->table;
+
+            $order->update(['table_id' => $newTable->id]);
+            $newTable->update(['status' => 'occupied']);
+
+            if ($oldTable) {
+                $oldTable->update(['status' => 'available']);
+            }
+
+            $this->audit->log('update', 'orders', $order, ['table_id' => $oldTable?->id], ['table_id' => $newTable->id]);
 
             return $order->fresh();
         });

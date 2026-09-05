@@ -43,13 +43,39 @@
                 </li>
                 @endcan
 
-                @canany(['orders.view', 'cash.view'])
+                @canany(['orders.view', 'cash.view', 'reservations.view', 'kitchen.view', 'bar.view'])
                 <li class="nav-item mt-3 mb-1 px-2 text-uppercase small text-secondary">Opérations</li>
                 @endcanany
                 @can('orders.view')
                 <li class="nav-item">
+                    <a href="{{ route('floor-plan.index') }}" class="nav-link {{ request()->routeIs('floor-plan.*') ? 'active' : '' }}">
+                        Plan de salle
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('orders.index') }}" class="nav-link {{ request()->routeIs('orders.*') ? 'active' : '' }}">
                         Commandes / POS
+                    </a>
+                </li>
+                @endcan
+                @can('reservations.view')
+                <li class="nav-item">
+                    <a href="{{ route('reservations.index') }}" class="nav-link {{ request()->routeIs('reservations.*') ? 'active' : '' }}">
+                        Réservations
+                    </a>
+                </li>
+                @endcan
+                @can('kitchen.view')
+                <li class="nav-item">
+                    <a href="{{ route('kitchen.index') }}" class="nav-link {{ request()->routeIs('kitchen.*') ? 'active' : '' }}">
+                        Cuisine
+                    </a>
+                </li>
+                @endcan
+                @can('bar.view')
+                <li class="nav-item">
+                    <a href="{{ route('bar.index') }}" class="nav-link {{ request()->routeIs('bar.*') ? 'active' : '' }}">
+                        Bar
                     </a>
                 </li>
                 @endcan

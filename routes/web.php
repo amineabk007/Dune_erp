@@ -2,15 +2,19 @@
 
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\BarController;
 use App\Http\Controllers\CashSessionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FloorPlanController;
+use App\Http\Controllers\KitchenController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -70,4 +74,24 @@ Route::middleware('auth')->group(function () {
 
     Route::get('orders/{order}/receipt', [ReceiptController::class, 'order'])->name('orders.receipt');
     Route::get('cash-sessions/{cashSession}/report', [ReceiptController::class, 'cashSession'])->name('cash-sessions.report');
+
+    Route::get('floor-plan', [FloorPlanController::class, 'index'])->name('floor-plan.index');
+    Route::post('floor-plan/tables/{table}/mark-available', [FloorPlanController::class, 'markAvailable'])->name('floor-plan.mark-available');
+    Route::post('floor-plan/tables/{table}/transfer', [FloorPlanController::class, 'transfer'])->name('floor-plan.transfer');
+
+    Route::get('kitchen', KitchenController::class)->name('kitchen.index');
+    Route::get('bar', BarController::class)->name('bar.index');
+
+    Route::get('reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::get('reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
+    Route::post('reservations', [ReservationController::class, 'store'])->name('reservations.store');
+    Route::get('reservations/{reservation}', [ReservationController::class, 'show'])->name('reservations.show');
+    Route::get('reservations/{reservation}/edit', [ReservationController::class, 'edit'])->name('reservations.edit');
+    Route::put('reservations/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
+    Route::post('reservations/{reservation}/confirm', [ReservationController::class, 'confirm'])->name('reservations.confirm');
+    Route::post('reservations/{reservation}/seat', [ReservationController::class, 'seat'])->name('reservations.seat');
+    Route::post('reservations/{reservation}/complete', [ReservationController::class, 'complete'])->name('reservations.complete');
+    Route::post('reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
+    Route::post('reservations/{reservation}/no-show', [ReservationController::class, 'noShow'])->name('reservations.no-show');
+    Route::post('reservations/{reservation}/create-order', [ReservationController::class, 'createOrder'])->name('reservations.create-order');
 });

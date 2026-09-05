@@ -185,11 +185,30 @@ supprimer.
   parcours complet (ouverture de caisse → commande → ajout d'articles en
   direct → encaissement → commande soldée) dans un vrai navigateur.
 
-Modules restants (plan de salle visuel/réservations, écrans cuisine/bar,
-recettes, stock, achats, CRM événements, dépenses, personnel, rapports de
-pilotage) seront livrés phase par phase, en suivant le plan de développement
-du cahier des charges (section 25), chacune vérifiée et testée avant de
-passer à la suivante.
+### Phase 4 — Opérations ✅ Implémentée et testée
+
+- Plan de salle visuel (zones + tables, couleur par statut), avec ouverture
+  directe d'une commande depuis une table libre, transfert d'une commande
+  vers une autre table, et remise en service d'une table en nettoyage.
+- Réservations : client, date/heure, couverts, affectation d'une ou
+  plusieurs tables, prévention des doubles réservations sur un créneau
+  (fenêtre de 2h par table), cycle de statuts complet (pending → confirmed
+  → seated → completed, ou cancelled/no_show). Le flux Réservation → Table
+  → Commande fonctionne de bout en bout (une réservation installée peut
+  générer sa commande en un clic, avec la bonne table déjà affectée).
+- Écrans Cuisine et Bar séparés (Livewire, rafraîchissement automatique
+  toutes les 5s), filtrés par destination de l'article (déterminée par le
+  type de catégorie du produit), avec transition de statut par article
+  (envoyé → préparation → prêt → servi) tracée avec horodatage et
+  utilisateur.
+- 14 tests supplémentaires (70 au total), plus une vérification manuelle en
+  navigateur du parcours commande → envoi cuisine → écran cuisine → passage
+  en préparation, en direct sans rechargement de page.
+
+Modules restants (recettes, stock, achats, CRM événements, dépenses,
+personnel, rapports de pilotage) seront livrés phase par phase, en suivant
+le plan de développement du cahier des charges (section 25), chacune
+vérifiée et testée avant de passer à la suivante.
 
 ## Licence
 
