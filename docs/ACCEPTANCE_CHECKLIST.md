@@ -95,15 +95,22 @@ phase.
 - [x] Fiches personnel avec activation/désactivation et lien optionnel
       vers un compte de connexion (un compte = un employé maximum).
 
+## Rôles & permissions (V1.1)
+
+- [x] Un administrateur peut créer un nouveau rôle métier directement
+      depuis l'écran Rôles & permissions (nom + permissions initiales),
+      sans toucher au code ni redéployer.
+- [x] Un rôle ne peut être supprimé que s'il n'est assigné à aucun
+      utilisateur ; le rôle `admin` ne peut jamais être supprimé — ces
+      deux règles sont appliquées même pour un acteur `admin`, qui
+      contourne pourtant les permissions ordinaires.
+
 ## Hors périmètre V1 (assumé, à considérer pour une V2)
 
 Ces points ont été identifiés pendant le développement mais
 délibérément laissés hors du périmètre V1 pour rester fidèle au cahier
 des charges initial sans sur-ingénierie :
 
-- Création de nouveaux rôles métier depuis l'interface (v1 : les 9 rôles
-  sont définis par seeder ; seules leurs permissions sont éditables en
-  ligne).
 - Notifications par e-mail/SMS (aucun transport mail configuré en V1).
 - Application mobile native (l'interface Bootstrap est responsive mais
   pensée pour un usage tablette/desktop en salle et en cuisine).

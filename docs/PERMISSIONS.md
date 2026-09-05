@@ -84,9 +84,25 @@ financier — cette permission est réservée pour un usage futur éventuel.
    changement est immédiat et journalisé dans l'audit. Le rôle `admin`
    n'est pas modifiable (il garde toujours l'accès global).
 
-En V1, les rôles eux-mêmes (les 9 listés ci-dessus) sont définis dans
-`RoleSeeder::GRANTS` et créés au seed ; l'écran **Rôles & permissions**
-ne permet d'éditer que la liste de permissions d'un rôle existant, pas
-d'en créer ou renommer un. Ajouter un nouveau rôle métier nécessite une
-modification de `RoleSeeder` (et un redéploiement), ce qui reste rare pour
-un seul établissement.
+## Créer un nouveau rôle métier
+
+Depuis l'écran **Rôles & permissions**, un administrateur peut créer un
+rôle directement depuis l'interface (bouton **Nouveau rôle**), sans
+toucher au code ni redéployer :
+
+1. Choisir un nom en minuscules, sans espaces ni accents (ex.
+   `voiturier`, `sommelier`) — c'est le nom technique utilisé partout
+   dans le système.
+2. Cocher les permissions initiales du nouveau rôle (modifiables plus
+   tard comme n'importe quel autre rôle).
+3. Enregistrer — le rôle est immédiatement assignable à un utilisateur
+   depuis l'écran Utilisateurs, et sa création est journalisée dans
+   l'audit.
+
+Un rôle peut être supprimé (bouton **Supprimer**, avec confirmation)
+seulement s'il n'est **assigné à aucun utilisateur** — sinon la
+suppression est refusée pour ne pas retirer silencieusement l'accès de
+quelqu'un ; il faut d'abord réassigner ces utilisateurs à un autre rôle.
+Le rôle `admin` ne peut jamais être supprimé, même par un administrateur
+(règle de sécurité appliquée au niveau du contrôleur, indépendamment du
+bypass `Gate::before` qui donne autrement tout accès à `admin`).

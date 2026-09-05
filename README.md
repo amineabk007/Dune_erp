@@ -355,6 +355,29 @@ code.
 Toutes les 10 phases du plan de développement sont maintenant livrées,
 testées (112 tests automatisés contre MySQL réel) et documentées.
 
+### Phase 11 — Création de rôles depuis l'interface ✅ Implémentée et testée
+
+Extension post-V1 demandée par l'exploitant : gérer les rôles métier sans
+toucher au code.
+
+- Un administrateur peut créer un nouveau rôle (nom + permissions
+  initiales) directement depuis l'écran **Rôles & permissions**, et le
+  rendre immédiatement assignable à un utilisateur — plus besoin de
+  modifier `RoleSeeder` et redéployer.
+- Un rôle ne peut être supprimé que s'il n'est assigné à **aucun**
+  utilisateur (sinon suppression refusée, pour ne pas retirer
+  silencieusement l'accès de quelqu'un) ; le rôle `admin` ne peut jamais
+  être supprimé. Ces deux garde-fous sont appliqués explicitement dans le
+  contrôleur, pas seulement dans la policy — nécessaire ici car le bypass
+  `Gate::before` qui donne un accès global à `admin` court-circuiterait
+  sinon silencieusement ces règles pour l'acteur `admin` lui-même,
+  exactement comme la protection anti-auto-verrouillage déjà en place sur
+  la désactivation d'utilisateur.
+- Création et suppression de rôle journalisées dans l'audit.
+- 6 tests supplémentaires (118 au total, tous verts contre MySQL réel),
+  plus une vérification manuelle en navigateur confirmant que le bouton
+  de suppression n'apparaît que pour les rôles sans utilisateur assigné.
+
 ## Licence
 
 Projet propriétaire — Dune Rooftop Marrakech.

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRolePermissionsRequest;
 use App\Services\AuditService;
 use Illuminate\Http\RedirectResponse;
@@ -20,12 +21,35 @@ class RoleController extends Controller
     {
         $this->authorize('viewAny', Role::class);
 
-        $roles = Role::with('permissions')->orderBy('name')->get();
+        $roles = Role::with('permissions')->withCount('users')->orderBy('name')->get();
 
         $permissions = Permission::orderBy('name')->get()
             ->groupBy(fn (Permission $permission) => explode('.', $permission->name)[0]);
 
         return view('roles.index', compact('roles', 'permissions'));
+    }
+
+    public function create(): View
+    {
+        $this->authorize('create', Role::class);
+
+        $permissions = Permission::orderBy('name')->get()
+            ->groupBy(fn (Permission $permission) => explode('.', $permission->name)[0]);
+
+        return view('roles.create', compact('permissions'));
+    }
+
+    public function store(StoreRoleRequest $request): RedirectResponse
+    {
+        $role = Role::create(['name' => $request->string('name')->toString(), 'guard_name' => 'web']);
+        $role->syncPermissions($request->input('permissions', []));
+
+        $this->audit->log('create', 'roles', $role, null, [
+            'name' => $role->name,
+            'permissions' => $request->input('permissions', []),
+        ]);
+
+        return redirect()->route('roles.index')->with('status', "Rôle « {$role->name} » créé.");
     }
 
     public function update(UpdateRolePermissionsRequest $request, Role $role): RedirectResponse
@@ -46,5 +70,22 @@ class RoleController extends Controller
         );
 
         return redirect()->route('roles.index')->with('status', "Permissions du rôle « {$role->name} » mises à jour.");
+    }
+
+    public function destroy(Role $role): RedirectResponse
+    {
+        $this->authorize('delete', $role);
+
+        // These are safety rules, not permissions: they must apply even to
+        // admin, which the Gate::before bypass would otherwise skip if left
+        // inside the policy (the same reasoning as the self-deactivation
+        // guard in UserController::toggleActive()).
+        abort_if($role->name === 'admin', 403, 'Le rôle admin ne peut pas être supprimé.');
+        abort_if($role->users()->exists(), 403, 'Ce rôle est encore assigné à au moins un utilisateur.');
+
+        $this->audit->log('delete', 'roles', $role, ['name' => $role->name], null);
+        $role->delete();
+
+        return redirect()->route('roles.index')->with('status', "Rôle « {$role->name} » supprimé.");
     }
 }

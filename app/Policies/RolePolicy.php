@@ -11,7 +11,17 @@ class RolePolicy
         return $user->can('roles.manage');
     }
 
+    public function create(User $user): bool
+    {
+        return $user->can('roles.manage');
+    }
+
     public function update(User $user): bool
+    {
+        return $user->can('roles.manage');
+    }
+
+    public function delete(User $user): bool
     {
         return $user->can('roles.manage');
     }
