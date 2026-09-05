@@ -7,6 +7,8 @@ use App\Http\Controllers\CashSessionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FloorPlanController;
 use App\Http\Controllers\IngredientController;
@@ -123,4 +125,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('expenses', ExpenseController::class)->except(['destroy', 'show']);
 
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+
+    Route::resource('events', EventController::class)->except(['destroy']);
+    Route::post('events/{event}/payments', [EventController::class, 'storePayment'])->name('events.payments.store');
+    Route::post('events/{event}/transition/{status}', [EventController::class, 'transition'])
+        ->whereIn('status', ['confirmed', 'completed', 'cancelled'])
+        ->name('events.transition');
+
+    Route::resource('employees', EmployeeController::class)->except(['destroy', 'show']);
+    Route::patch('employees/{employee}/toggle-active', [EmployeeController::class, 'toggleActive'])->name('employees.toggle-active');
 });

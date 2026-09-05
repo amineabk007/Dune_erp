@@ -266,9 +266,30 @@ supprimer.
   (commande payée, dépense), et de l'accès refusé (403) pour un rôle sans
   `reports.view`.
 
-Modules restants (CRM événements, personnel) seront livrés phase par
-phase, en suivant le plan de développement du cahier des charges
-(section 25), chacune vérifiée et testée avant de passer à la suivante.
+### Phase 8 — Événements & Personnel ✅ Implémentée et testée
+
+- Événements privés (nom, date/heure, client optionnel, nombre d'invités,
+  montant total du devis) avec cycle de statut `pending` → `confirmed` →
+  `completed`, annulable (avec motif obligatoire) depuis les deux états
+  ouverts ; les transitions non autorisées (ex. terminer un événement en
+  attente) sont rejetées.
+- Acomptes et paiements multiples par événement (`event_payments` : type
+  acompte/solde/autre, méthode, montant), avec solde dû calculé
+  automatiquement et impossibilité de dépasser le montant total du devis ;
+  un événement annulé ne peut plus recevoir de paiement.
+- Fiches personnel (poste, coordonnées, date d'embauche, salaire,
+  activer/désactiver — jamais de suppression) avec liaison optionnelle vers
+  un compte utilisateur existant pour la connexion (un compte ne peut être
+  lié qu'à un seul employé).
+- 12 tests supplémentaires (110 au total, tous verts contre MySQL réel),
+  plus une vérification manuelle en navigateur du parcours création
+  d'événement → confirmation → encaissement d'acompte, et de la création /
+  désactivation d'un employé.
+
+Modules restants (audit/QA/sécurité, mise en production) seront livrés
+phase par phase, en suivant le plan de développement du cahier des
+charges (section 25), chacune vérifiée et testée avant de passer à la
+suivante.
 
 ## Licence
 

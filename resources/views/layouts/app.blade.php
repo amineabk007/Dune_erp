@@ -178,6 +178,24 @@
                     </a>
                 </li>
                 @endcan
+
+                @canany(['events.manage', 'employees.manage'])
+                <li class="nav-item mt-3 mb-1 px-2 text-uppercase small text-secondary">Événements &amp; RH</li>
+                @endcanany
+                @can('events.manage')
+                <li class="nav-item">
+                    <a href="{{ route('events.index') }}" class="nav-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
+                        Événements
+                    </a>
+                </li>
+                @endcan
+                @can('employees.manage')
+                <li class="nav-item">
+                    <a href="{{ route('employees.index') }}" class="nav-link {{ request()->routeIs('employees.*') ? 'active' : '' }}">
+                        Personnel
+                    </a>
+                </li>
+                @endcan
             </ul>
         </nav>
 
