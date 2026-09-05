@@ -1,0 +1,44 @@
+// Dune ERP - brand variables override Bootstrap defaults before import
+$primary:    #b3652b; // terracotta / desert sand
+$secondary:  #6b5a4a; // warm stone
+$success:    #4a7c59; // palm green
+$info:       #3f7d92; // rooftop dusk blue
+$warning:    #d9a441; // sun ochre
+$danger:     #a8342a; // deep clay red
+$dark:       #221c17; // dune night
+$light:      #f6efe6; // sand
+
+$body-bg: #faf6ef;
+$body-color: #2b2621;
+
+$font-family-sans-serif: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+@import "bootstrap/scss/bootstrap";
+
+.dune-sidebar {
+    min-height: 100vh;
+    background: $dark;
+    color: $light;
+}
+
+.dune-sidebar .nav-link {
+    color: rgba($light, 0.75);
+}
+
+.dune-sidebar .nav-link.active,
+.dune-sidebar .nav-link:hover {
+    color: $light;
+    background: rgba($primary, 0.25);
+}
+
+.dune-brand {
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: $light;
+}
+
+.badge-status {
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+}
