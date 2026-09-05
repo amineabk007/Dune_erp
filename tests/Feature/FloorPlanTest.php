@@ -56,6 +56,7 @@ class FloorPlanTest extends TestCase
         $this->actingAs($this->serveur)->post("/floor-plan/tables/{$table->id}/mark-available")->assertRedirect();
 
         $this->assertSame('available', $table->fresh()->status);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'update', 'module' => 'tables']);
     }
 
     public function test_transferring_an_order_to_another_table(): void

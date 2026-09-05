@@ -16,9 +16,9 @@ class StoreIngredientRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255', 'unique:ingredients,name'],
             'unit' => ['required', 'string', 'max:20'],
-            'current_stock' => ['required', 'numeric', 'min:0'],
-            'minimum_stock' => ['required', 'numeric', 'min:0'],
-            'unit_cost' => ['required', 'numeric', 'min:0'],
+            'current_stock' => ['required', 'numeric', 'min:0', 'max:999999.999'],
+            'minimum_stock' => ['required', 'numeric', 'min:0', 'max:999999.999'],
+            'unit_cost' => ['required', 'numeric', 'min:0', 'max:999999.9999'],
             'is_active' => ['sometimes', 'boolean'],
         ];
     }

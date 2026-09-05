@@ -52,6 +52,28 @@ class RecipeManagementTest extends TestCase
 
         // batch cost = 0.5*6 + 0.3*40 = 3 + 12 = 15; per portion (yield 2) = 7.5
         $this->assertSame(7.5, $recipe->foodCostPerUnit());
+        $this->assertDatabaseHas('audit_logs', ['action' => 'create', 'module' => 'recipes']);
+    }
+
+    public function test_updating_and_deleting_a_recipe_is_audited(): void
+    {
+        $ingredient = Ingredient::factory()->create();
+        $recipe = Recipe::factory()->create(['product_id' => $this->product->id, 'yield_quantity' => 1]);
+        $recipe->items()->create(['ingredient_id' => $ingredient->id, 'quantity' => 1]);
+
+        $this->actingAs($this->stockUser)->put("/recipes/{$recipe->id}", [
+            'yield_quantity' => 2,
+            'ingredient_id' => [$ingredient->id],
+            'quantity' => [1],
+        ])->assertRedirect();
+
+        $this->assertSame('2.00', (string) $recipe->fresh()->yield_quantity);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'update', 'module' => 'recipes']);
+
+        $this->actingAs($this->stockUser)->delete("/recipes/{$recipe->id}")->assertRedirect();
+
+        $this->assertDatabaseMissing('recipes', ['id' => $recipe->id]);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'delete', 'module' => 'recipes']);
     }
 
     public function test_a_role_without_recipes_manage_cannot_create_recipes(): void

@@ -52,6 +52,7 @@ class StockManagementTest extends TestCase
         ])->assertRedirect();
 
         $this->assertSame('20.000', (string) $ingredient->fresh()->current_stock);
+        $this->assertDatabaseHas('audit_logs', ['action' => 'update', 'module' => 'stock']);
     }
 
     public function test_manual_stock_adjustment_updates_stock_and_creates_a_movement(): void

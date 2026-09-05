@@ -286,10 +286,41 @@ supprimer.
   d'événement → confirmation → encaissement d'acompte, et de la création /
   désactivation d'un employé.
 
-Modules restants (audit/QA/sécurité, mise en production) seront livrés
-phase par phase, en suivant le plan de développement du cahier des
-charges (section 25), chacune vérifiée et testée avant de passer à la
-suivante.
+### Phase 9 — Audit, QA, sécurité et performance ✅ Implémentée et testée
+
+Passe de revue transverse sur les phases 1 à 8, avant la mise en
+production :
+
+- **Audit** : comblé les trous restants — création/modification/suppression
+  de recettes, modification des fiches ingrédients (coût, stock minimum) et
+  remise en service d'une table depuis le plan de salle sont désormais
+  tracées dans `audit_logs`, au même titre que tout le reste (aucune faille
+  de traçabilité identifiée sur les actions financières ou de stock).
+- **Performance** : ajout d'index composites/simples sur les colonnes
+  réellement filtrées par le tableau de bord et la caisse en production —
+  `payments(refunded, created_at)` (interrogée à chaque calcul de CA),
+  `cash_sessions.status` (session ouverte, vérifiée à chaque paiement),
+  `restaurant_tables.status`, `cash_movements.type`, `ingredients.is_active`.
+  Revue des requêtes N+1 sur tous les écrans : aucune trouvée, chaque
+  `index()`/`show()` charge déjà les relations utilisées par sa vue.
+- **Sécurité** : nouveau middleware `SecurityHeaders` (X-Frame-Options,
+  X-Content-Type-Options, Referrer-Policy, Permissions-Policy, et HSTS
+  quand la requête est en HTTPS) appliqué à toute réponse ; documentation
+  de `SESSION_SECURE_COOKIE` dans `.env.example` pour la mise en
+  production HTTPS ; limitation de tentatives de connexion déjà en place
+  depuis la Phase 1 (5 essais par couple e-mail + IP) confirmée
+  fonctionnellement équivalente à un throttle middleware classique.
+- **Validation** : ajout de bornes maximales manquantes sur les montants et
+  quantités saisissables (ingrédients, événements) pour empêcher la saisie
+  de valeurs aberrantes.
+- 2 tests supplémentaires ciblés (112 au total, tous verts contre MySQL
+  réel) plus une vérification manuelle en navigateur (en-têtes de sécurité
+  visibles sur toute réponse, parcours recette modifiée/supprimée toujours
+  fonctionnel après l'ajout des logs d'audit).
+
+Modules restants (mise en production) seront livrés phase par phase, en
+suivant le plan de développement du cahier des charges (section 25),
+chacune vérifiée et testée avant de passer à la suivante.
 
 ## Licence
 

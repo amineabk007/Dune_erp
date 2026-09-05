@@ -7,6 +7,7 @@ use App\Http\Requests\StockInventoryRequest;
 use App\Http\Requests\StoreIngredientRequest;
 use App\Http\Requests\UpdateIngredientRequest;
 use App\Models\Ingredient;
+use App\Services\AuditService;
 use App\Services\StockService;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
@@ -17,7 +18,10 @@ use Illuminate\View\View;
 
 class IngredientController extends Controller implements HasMiddleware
 {
-    public function __construct(private readonly StockService $stock) {}
+    public function __construct(
+        private readonly StockService $stock,
+        private readonly AuditService $audit,
+    ) {}
 
     public static function middleware(): array
     {
@@ -73,7 +77,12 @@ class IngredientController extends Controller implements HasMiddleware
 
     public function update(UpdateIngredientRequest $request, Ingredient $ingredient): RedirectResponse
     {
+        $old = $ingredient->only(['name', 'unit', 'minimum_stock', 'unit_cost']);
         $ingredient->update($request->validated());
+
+        $this->audit->log('update', 'stock', $ingredient, $old, $ingredient->only([
+            'name', 'unit', 'minimum_stock', 'unit_cost',
+        ]));
 
         return redirect()->route('ingredients.index')->with('status', 'Ingrédient mis à jour.');
     }

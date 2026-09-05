@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\RestaurantTable;
 use App\Models\Zone;
+use App\Services\AuditService;
 use App\Services\OrderService;
 use DomainException;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +15,10 @@ use Illuminate\View\View;
 
 class FloorPlanController extends Controller implements HasMiddleware
 {
-    public function __construct(private readonly OrderService $orders) {}
+    public function __construct(
+        private readonly OrderService $orders,
+        private readonly AuditService $audit,
+    ) {}
 
     public static function middleware(): array
     {
@@ -43,6 +47,8 @@ class FloorPlanController extends Controller implements HasMiddleware
         }
 
         $table->update(['status' => 'available']);
+
+        $this->audit->log('update', 'tables', $table, ['status' => 'cleaning'], ['status' => 'available']);
 
         return back()->with('status', 'Table marquée disponible.');
     }

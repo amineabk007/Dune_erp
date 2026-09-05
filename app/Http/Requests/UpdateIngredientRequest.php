@@ -22,8 +22,8 @@ class UpdateIngredientRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255', Rule::unique('ingredients', 'name')->ignore($this->route('ingredient'))],
             'unit' => ['required', 'string', 'max:20'],
-            'minimum_stock' => ['required', 'numeric', 'min:0'],
-            'unit_cost' => ['required', 'numeric', 'min:0'],
+            'minimum_stock' => ['required', 'numeric', 'min:0', 'max:999999.999'],
+            'unit_cost' => ['required', 'numeric', 'min:0', 'max:999999.9999'],
             'is_active' => ['sometimes', 'boolean'],
         ];
     }
