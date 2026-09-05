@@ -7,7 +7,20 @@ fonctionnel et technique du projet.
 
 Ce dépôt est développé **par phases** (voir "État d'avancement" ci-dessous).
 Chaque phase livre des fonctionnalités réelles et testées — pas de maquette
-statique, pas de bouton factice.
+statique, pas de bouton factice. Les 10 phases prévues sont maintenant
+livrées ; voir `docs/ACCEPTANCE_CHECKLIST.md` pour la checklist de recette
+complète.
+
+## Documentation
+
+- [`docs/PERMISSIONS.md`](docs/PERMISSIONS.md) — matrice des rôles et
+  permissions, comment les ajuster.
+- [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) — déploiement en production
+  (prérequis, `.env`, Nginx, mise à jour).
+- [`docs/BACKUP_RESTORE.md`](docs/BACKUP_RESTORE.md) — sauvegarde et
+  restauration de la base de données.
+- [`docs/ACCEPTANCE_CHECKLIST.md`](docs/ACCEPTANCE_CHECKLIST.md) —
+  checklist de recette fonctionnelle par module.
 
 ## Stack technique
 
@@ -102,6 +115,9 @@ production, puis désactivez/supprimez ces comptes de démo.
 | comptable | comptable@dune-erp.test | password |
 
 ## Rôles & permissions
+
+Voir [`docs/PERMISSIONS.md`](docs/PERMISSIONS.md) pour la matrice complète
+rôle × permission. Résumé :
 
 Le rôle **admin** a un accès global (bypass total, voir
 `AppServiceProvider::boot()`). Tous les autres rôles fonctionnent selon le
@@ -318,9 +334,26 @@ production :
   visibles sur toute réponse, parcours recette modifiée/supprimée toujours
   fonctionnel après l'ajout des logs d'audit).
 
-Modules restants (mise en production) seront livrés phase par phase, en
-suivant le plan de développement du cahier des charges (section 25),
-chacune vérifiée et testée avant de passer à la suivante.
+### Phase 10 — Production readiness & documentation ✅ Implémentée
+
+Dernière phase du plan de développement (section 25 du cahier des
+charges) : rendre le système prêt à être exploité, documenté au-delà du
+code.
+
+- Guide de déploiement complet (`docs/DEPLOYMENT.md`) : prérequis serveur,
+  étapes d'installation initiale, checklist des variables `.env` de
+  production, configuration Nginx d'exemple, procédure de mise à jour.
+- Procédure de sauvegarde et restauration (`docs/BACKUP_RESTORE.md`) :
+  script de sauvegarde quotidienne automatisée, commandes de restauration,
+  et rappel qu'une sauvegarde non testée n'est pas une sauvegarde.
+- Guide des rôles et permissions détaillé (`docs/PERMISSIONS.md`) :
+  matrice complète rôle × module, avec le rôle métier prévu pour chacun.
+- Checklist de recette fonctionnelle par module
+  (`docs/ACCEPTANCE_CHECKLIST.md`), incluant une section transparente sur
+  ce qui reste volontairement hors périmètre V1.
+
+Toutes les 10 phases du plan de développement sont maintenant livrées,
+testées (112 tests automatisés contre MySQL réel) et documentées.
 
 ## Licence
 
