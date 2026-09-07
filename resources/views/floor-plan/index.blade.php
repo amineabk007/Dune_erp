@@ -26,6 +26,7 @@
                             <span class="badge text-bg-{{ $statusColors[$table->status] }} badge-status my-1">{{ $table->status }}</span>
 
                             @if ($order)
+                                <div class="text-muted small" data-occupied-since="{{ $order->created_at->toIso8601String() }}" data-elapsed>&nbsp;</div>
                                 <a href="{{ route('orders.show', $order) }}" class="btn btn-outline-primary btn-sm d-block mt-1">
                                     Voir commande
                                 </a>
@@ -71,3 +72,27 @@
         </div>
     @endforeach
 @endsection
+
+@push('scripts')
+    <script>
+        (function () {
+            function formatElapsed(ms) {
+                const totalMinutes = Math.max(0, Math.floor(ms / 60000));
+                const h = Math.floor(totalMinutes / 60);
+                const m = totalMinutes % 60;
+
+                return h > 0 ? `Occupée depuis ${h}h${String(m).padStart(2, '0')}` : `Occupée depuis ${m} min`;
+            }
+
+            function tick() {
+                document.querySelectorAll('[data-elapsed]').forEach((el) => {
+                    const since = new Date(el.dataset.occupiedSince);
+                    el.textContent = formatElapsed(Date.now() - since.getTime());
+                });
+            }
+
+            tick();
+            setInterval(tick, 30000);
+        })();
+    </script>
+@endpush

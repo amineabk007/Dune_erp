@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Ingredient;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\User;
 use DomainException;
@@ -130,6 +131,47 @@ class StockService
                 );
             }
         }
+    }
+
+    /**
+     * Record the waste of a finished dish (dropped, burnt, sent back...) by
+     * exploding its recipe into ingredient-level "waste" movements, exactly
+     * like a sale would consume them — so raw-material stock stays accurate
+     * even though this dish was never actually served. Returns the food
+     * cost of the loss so it can be shown to whoever declares it.
+     */
+    public function recordDishWaste(Product $product, User $user, float $quantity, string $reason): float
+    {
+        if ($quantity <= 0) {
+            throw new DomainException('La quantité de perte doit être positive.');
+        }
+
+        $recipe = $product->recipe;
+
+        if (! $recipe) {
+            throw new DomainException("Ce produit n'a pas de recette associée ; la perte ne peut pas être chiffrée.");
+        }
+
+        $recipe->loadMissing('items.ingredient');
+        $yield = (float) $recipe->yield_quantity ?: 1;
+        $totalCost = 0.0;
+
+        foreach ($recipe->items as $recipeItem) {
+            $consumed = round(((float) $recipeItem->quantity / $yield) * $quantity, 3);
+
+            $this->move(
+                $recipeItem->ingredient,
+                'waste',
+                -$consumed,
+                $user,
+                $reason,
+                $product->name
+            );
+
+            $totalCost += $consumed * (float) $recipeItem->ingredient->unit_cost;
+        }
+
+        return round($totalCost, 2);
     }
 
     public function lowStock()

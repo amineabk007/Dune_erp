@@ -7,6 +7,7 @@ use App\Http\Controllers\CashSessionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DishWasteController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExpenseController;
@@ -115,6 +116,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('stock/movements', [StockMovementController::class, 'index'])->name('stock-movements.index');
     Route::get('stock/alerts', [StockMovementController::class, 'alerts'])->name('stock-movements.alerts');
+    Route::get('stock/dish-waste', [DishWasteController::class, 'create'])->name('dish-waste.create');
+    Route::post('stock/dish-waste', [DishWasteController::class, 'store'])->name('dish-waste.store');
 
     Route::resource('suppliers', SupplierController::class)->except(['destroy']);
 

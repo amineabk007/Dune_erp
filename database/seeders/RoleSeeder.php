@@ -24,7 +24,7 @@ class RoleSeeder extends Seeder
             'recipes.manage', 'categories.manage', 'tables.manage',
         ],
         'manager' => [
-            'orders.view', 'orders.create', 'orders.update', 'orders.cancel', 'orders.discount',
+            'orders.view', 'orders.create', 'orders.update', 'orders.cancel', 'orders.discount', 'orders.transfer_item',
             'payments.view', 'payments.create', 'payments.refund',
             'cash.view', 'cash.open', 'cash.close', 'cash.movement',
             'stock.view', 'stock.adjust', 'stock.inventory',
@@ -47,10 +47,10 @@ class RoleSeeder extends Seeder
             'products.view',
         ],
         'cuisine' => [
-            'kitchen.view', 'orders.view', 'stock.view',
+            'kitchen.view', 'orders.view', 'stock.view', 'stock.adjust',
         ],
         'bar' => [
-            'bar.view', 'orders.view', 'stock.view',
+            'bar.view', 'orders.view', 'stock.view', 'stock.adjust',
         ],
         'stock' => [
             'stock.view', 'stock.adjust', 'stock.inventory',

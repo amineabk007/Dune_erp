@@ -102,4 +102,32 @@ class ProductionBoardTest extends TestCase
 
         $this->assertSame('new', $item->fresh()->status);
     }
+
+    public function test_a_new_order_sent_after_the_screen_is_open_triggers_a_sound_alert(): void
+    {
+        $this->seedRolesAndPermissions();
+
+        $cuisine = User::factory()->create();
+        $cuisine->assignRole('cuisine');
+
+        $server = User::factory()->create();
+        $server->assignRole('serveur');
+
+        $category = Category::factory()->create(['type' => 'food']);
+        $product = Product::factory()->create(['category_id' => $category->id]);
+
+        $orders = app(OrderService::class);
+        $order = $orders->createOrder($server, null, null, null);
+        $orders->addItem($order, $product, 1);
+
+        $this->actingAs($cuisine);
+
+        // Screen opened before anything is sent: no alert on the first render.
+        $component = Livewire::test(ProductionBoard::class, ['destination' => 'kitchen']);
+        $component->assertNotDispatched('dune-notify');
+
+        // Order sent while the screen stays open: the next poll should alert.
+        $orders->sendToProduction($order);
+        $component->call('poll')->assertDispatched('dune-notify');
+    }
 }

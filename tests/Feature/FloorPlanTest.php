@@ -76,4 +76,15 @@ class FloorPlanTest extends TestCase
         $this->assertSame('occupied', $newTable->fresh()->status);
         $this->assertSame('available', $oldTable->fresh()->status);
     }
+
+    public function test_an_occupied_table_shows_its_occupied_since_timestamp(): void
+    {
+        $table = RestaurantTable::factory()->create(['zone_id' => $this->zone->id, 'status' => 'available']);
+        $order = app(OrderService::class)->createOrder($this->serveur, $table->id, null, null);
+
+        $response = $this->actingAs($this->serveur)->get('/floor-plan');
+
+        $response->assertOk();
+        $response->assertSee('data-occupied-since="'.$order->created_at->toIso8601String().'"', false);
+    }
 }

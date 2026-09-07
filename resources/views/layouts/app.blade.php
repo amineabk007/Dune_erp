@@ -139,6 +139,13 @@
                     </a>
                 </li>
                 @endcan
+                @can('stock.adjust')
+                <li class="nav-item">
+                    <a href="{{ route('dish-waste.create') }}" class="nav-link {{ request()->routeIs('dish-waste.*') ? 'active' : '' }}">
+                        Déclarer une perte
+                    </a>
+                </li>
+                @endcan
                 @can('recipes.manage')
                 <li class="nav-item">
                     <a href="{{ route('recipes.index') }}" class="nav-link {{ request()->routeIs('recipes.*') ? 'active' : '' }}">
@@ -238,7 +245,77 @@
         </div>
     </div>
 
+    @auth
+        @can('orders.create')
+            @livewire('ready-orders-notifier')
+        @endcan
+    @endauth
+
+    {{-- The x-show target must carry no Bootstrap "d-flex"/display utility
+         of its own — those apply !important and would permanently override
+         Alpine's inline display:none/flex toggling regardless of "show". --}}
+    <div
+        x-data="{ show: false, message: '' }"
+        x-show="show"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 2000;"
+        x-on:dune-notify-show.window="show = true; message = $event.detail.message"
+    >
+        <div class="d-flex justify-content-center">
+            <div class="alert alert-warning shadow-lg m-3 d-flex align-items-center gap-3" style="max-width: 480px;">
+                <span class="fs-4">🔔</span>
+                <span class="flex-grow-1" x-text="message"></span>
+                <button
+                    type="button"
+                    class="btn btn-dark btn-sm"
+                    x-on:click="show = false; window.duneStopAlertSound && window.duneStopAlertSound();"
+                >
+                    OK, j'ai vu
+                </button>
+            </div>
+        </div>
+    </div>
+
     @stack('scripts')
     @livewireScripts
+    <script>
+        (function () {
+            let audioCtx = null;
+            let intervalId = null;
+
+            function beepOnce() {
+                if (! audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.frequency.value = 880;
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            }
+
+            window.duneStartAlertSound = function () {
+                if (intervalId) return;
+                audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+                beepOnce();
+                intervalId = setInterval(beepOnce, 800);
+            };
+
+            window.duneStopAlertSound = function () {
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+            };
+
+            document.addEventListener('livewire:init', function () {
+                Livewire.on('dune-notify', function (event) {
+                    const message = Array.isArray(event) ? (event[0] && event[0].message) : event.message;
+                    window.dispatchEvent(new CustomEvent('dune-notify-show', { detail: { message: message } }));
+                    window.duneStartAlertSound();
+                });
+            });
+        })();
+    </script>
 </body>
 </html>

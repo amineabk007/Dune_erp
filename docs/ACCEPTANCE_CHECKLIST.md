@@ -119,6 +119,26 @@ phase.
       réservation ou enregistrer un mouvement de stock reste possible
       même si l'e-mail ne part pas).
 
+## Confort salle/cuisine (V1.3)
+
+- [x] Chaque table occupée affiche depuis combien de temps, rafraîchi
+      automatiquement sans requête serveur supplémentaire.
+- [x] Déclarer la perte d'un plat préparé décompte les ingrédients de sa
+      recette du stock et affiche le coût matière perdu ; accessible aux
+      rôles cuisine et bar en plus de manager/stock.
+- [x] Un manager peut transférer un seul article vers la commande ouverte
+      d'une autre table (totaux des deux commandes recalculés) ; un
+      serveur sans la permission dédiée ne le peut pas.
+- [x] Cuisine et bar reçoivent une alerte sonore persistante (bannière +
+      son en boucle jusqu'à confirmation) dès qu'une nouvelle commande
+      leur est envoyée ; le serveur reçoit la même alerte, où qu'il
+      navigue, dès qu'un de ses articles est prêt. Aucune alerte
+      rétroactive pour ce qui était déjà en attente à l'ouverture de
+      l'écran.
+- [x] Les écrans cuisine et bar regroupent les articles par commande sous
+      la table concernée, avec une couleur cohérente par table entre les
+      deux écrans.
+
 ## Hors périmètre V1 (assumé, à considérer pour une V2)
 
 Ces points ont été identifiés pendant le développement mais

@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\RestaurantTable;
 use App\Services\CashSessionService;
 use App\Services\OrderService;
 use App\Services\PaymentService;
@@ -44,6 +45,9 @@ class OrderBuilder extends Component
 
     // Refund reasons keyed by payment id
     public array $refundReasons = [];
+
+    // Selected destination table id per item id, for manager item transfers
+    public array $transferTargets = [];
 
     public function mount(Order $order): void
     {
@@ -87,6 +91,25 @@ class OrderBuilder extends Component
     public function payments(): Collection
     {
         return $this->order->payments()->with('receivedBy')->latest()->get();
+    }
+
+    /**
+     * Other tables that currently have an open order and could receive a
+     * transferred item — a table with no open order has nowhere for the
+     * item to land, so it isn't offered as a target.
+     */
+    #[Computed]
+    public function transferableTables(): Collection
+    {
+        return Order::whereNotNull('table_id')
+            ->whereNotIn('status', ['paid', 'cancelled'])
+            ->where('id', '!=', $this->order->id)
+            ->with('table.zone')
+            ->get()
+            ->pluck('table')
+            ->filter()
+            ->unique('id')
+            ->sortBy('name');
     }
 
     public function addProduct(int $productId): void
@@ -275,6 +298,34 @@ class OrderBuilder extends Component
         $this->refreshOrder();
     }
 
+    public function transferItem(int $itemId): void
+    {
+        if (! $this->authorizeAction('orders.transfer_item')) {
+            return;
+        }
+
+        $targetTableId = (int) ($this->transferTargets[$itemId] ?? 0);
+
+        if ($targetTableId <= 0) {
+            $this->error = 'Choisissez une table de destination.';
+
+            return;
+        }
+
+        $item = OrderItem::where('order_id', $this->order->id)->findOrFail($itemId);
+        $targetTable = RestaurantTable::findOrFail($targetTableId);
+
+        try {
+            app(OrderService::class)->moveItem($item, $targetTable);
+            $this->status = 'Article transféré vers '.$targetTable->name.'.';
+            unset($this->transferTargets[$itemId]);
+        } catch (DomainException $e) {
+            $this->error = $e->getMessage();
+        }
+
+        $this->refreshOrder();
+    }
+
     private function authorizeAction(string $permission): bool
     {
         $this->error = null;
@@ -292,7 +343,7 @@ class OrderBuilder extends Component
     {
         $this->order->refresh();
         $this->paymentAmount = $this->order->balanceDue();
-        unset($this->items, $this->currentSession, $this->payments);
+        unset($this->items, $this->currentSession, $this->payments, $this->transferableTables);
     }
 
     public function render()

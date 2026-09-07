@@ -141,6 +141,23 @@
                                         @endcan
                                     </div>
                                 </div>
+                                @can('orders.transfer_item')
+                                    @if ($this->transferableTables->isNotEmpty())
+                                        <div class="d-flex gap-1 mt-2">
+                                            <select wire:model="transferTargets.{{ $item->id }}" class="form-select form-select-sm">
+                                                <option value="">Transférer vers…</option>
+                                                @foreach ($this->transferableTables as $table)
+                                                    <option value="{{ $table->id }}">
+                                                        {{ $table->zone->name ?? '' }} — {{ $table->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" wire:click="transferItem({{ $item->id }})">
+                                                OK
+                                            </button>
+                                        </div>
+                                    @endif
+                                @endcan
                             </li>
                         @empty
                             <li class="list-group-item text-muted">Aucun article pour le moment.</li>

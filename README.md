@@ -429,6 +429,47 @@ plutôt que de compter sur une vérification manuelle des écrans.
   de stock bas sont bien écrits dans les logs avec le bon destinataire
   et le bon contenu.
 
+### Phase 14 — Confort salle/cuisine (retours d'usage réel) ✅ Implémentée et testée
+
+Cinq améliorations demandées après les premiers tests grandeur nature du
+restaurant, toutes centrées sur ce qui se passe concrètement en salle et
+en cuisine pendant le coup de feu.
+
+- **Durée d'occupation des tables** : chaque table occupée sur le plan de
+  salle affiche depuis combien de temps ("Occupée depuis 45 min"),
+  calculé et rafraîchi côté navigateur toutes les 30 secondes — aucune
+  requête serveur supplémentaire.
+- **Pertes de plats préparés** (`Déclarer une perte`, sous Stock) :
+  déclarer la casse d'un plat déjà préparé (tombé, brûlé, retourné)
+  décompte automatiquement les ingrédients de sa recette du stock —
+  exactement comme une vente — et affiche le coût matière perdu.
+  Accessible aux rôles `cuisine` et `bar` en plus de `manager`/`stock`
+  (`stock.adjust`), puisque ce sont eux qui constatent la perte en
+  premier.
+- **Transfert d'un article entre tables** (`orders.transfer_item`,
+  réservé à `manager`) : contrairement au transfert de commande entière
+  déjà existant, un seul article peut être déplacé vers la commande
+  ouverte d'une autre table — utile quand un groupe se scinde après
+  avoir commandé. La table de destination doit déjà avoir une commande
+  ouverte ; les totaux des deux commandes sont recalculés.
+- **Alertes sonores persistantes** : la cuisine et le bar entendent un
+  bip en boucle (Web Audio, aucun fichier audio à héberger) dès qu'une
+  nouvelle commande leur est envoyée, avec une bannière qui reste tant
+  qu'elle n'est pas cliquée ("OK, j'ai vu"). Le serveur qui a pris la
+  commande reçoit la même alerte, où qu'il navigue dans l'application,
+  dès qu'un de ses articles passe à "prêt". Aucune commande déjà en
+  place au moment où l'écran s'ouvre ne déclenche d'alerte rétroactive.
+- **Écrans cuisine/bar groupés par table** : les articles ne sont plus
+  listés en vrac mais regroupés par commande, sous un bandeau affichant
+  la table — chaque table garde une couleur cohérente entre les deux
+  écrans (et entre plusieurs commandes successives à la même table),
+  pour ne plus mélanger les tickets pendant le coup de feu.
+- 12 tests supplémentaires (137 au total, tous verts contre MySQL réel),
+  plus une vérification de bout en bout en navigateur réel (Playwright) :
+  écran cuisine ouvert dans un onglet, commande envoyée depuis un
+  processus séparé, bannière sonore confirmée à l'apparition du nouvel
+  article groupé sous sa propre table.
+
 ## Licence
 
 Projet propriétaire — Dune Rooftop Marrakech.

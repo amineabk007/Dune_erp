@@ -19,7 +19,7 @@ class PermissionSeeder extends Seeder
         'users' => ['view', 'manage'],
         'roles' => ['manage'],
 
-        'orders' => ['view', 'create', 'update', 'cancel', 'delete', 'discount'],
+        'orders' => ['view', 'create', 'update', 'cancel', 'delete', 'discount', 'transfer_item'],
         'payments' => ['view', 'create', 'refund'],
         'cash' => ['view', 'open', 'close', 'movement'],
 

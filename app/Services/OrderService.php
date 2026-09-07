@@ -303,6 +303,52 @@ class OrderService
         });
     }
 
+    /**
+     * Move a single item from its current order to whichever open order is
+     * seated at the target table right now (e.g. a guest moved seats after
+     * ordering). Both orders' totals are recalculated; the item keeps its
+     * own kitchen/bar status untouched. Restricted to managers via the
+     * orders.transfer_item permission — unlike a whole-table transfer,
+     * splitting one order's items across two tables is easy to get wrong.
+     */
+    public function moveItem(OrderItem $item, RestaurantTable $targetTable): OrderItem
+    {
+        $sourceOrder = $item->order;
+        $this->assertEditable($sourceOrder);
+
+        if ($targetTable->id === $sourceOrder->table_id) {
+            throw new DomainException('Cet article est déjà sur cette table.');
+        }
+
+        $targetOrder = Order::where('table_id', $targetTable->id)
+            ->whereNotIn('status', ['paid', 'cancelled'])
+            ->first();
+
+        if (! $targetOrder) {
+            throw new DomainException("La table de destination n'a pas de commande ouverte.");
+        }
+
+        $this->assertEditable($targetOrder);
+
+        return DB::transaction(function () use ($item, $sourceOrder, $targetOrder, $targetTable) {
+            $item->update(['order_id' => $targetOrder->id]);
+
+            $this->recalculateTotals($sourceOrder->fresh());
+            $this->recalculateTotals($targetOrder->fresh());
+
+            $this->audit->log(
+                'update',
+                'order_items',
+                $item,
+                ['order_id' => $sourceOrder->id],
+                ['order_id' => $targetOrder->id],
+                'Transfert vers '.$targetTable->name
+            );
+
+            return $item->fresh();
+        });
+    }
+
     private function assertEditable(Order $order): void
     {
         if (in_array($order->status, ['paid', 'cancelled'], true)) {

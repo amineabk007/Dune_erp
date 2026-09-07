@@ -109,11 +109,11 @@ class StockManagementTest extends TestCase
 
     public function test_a_role_without_stock_adjust_cannot_create_ingredients_but_can_view_them(): void
     {
-        $cuisine = User::factory()->create();
-        $cuisine->assignRole('cuisine'); // has stock.view only
+        $direction = User::factory()->create();
+        $direction->assignRole('direction'); // has stock.view only, not stock.adjust
 
-        $this->actingAs($cuisine)->get('/ingredients')->assertOk();
-        $this->actingAs($cuisine)->post('/ingredients', [
+        $this->actingAs($direction)->get('/ingredients')->assertOk();
+        $this->actingAs($direction)->post('/ingredients', [
             'name' => 'X', 'unit' => 'kg', 'current_stock' => 1, 'minimum_stock' => 1, 'unit_cost' => 1,
         ])->assertForbidden();
     }
