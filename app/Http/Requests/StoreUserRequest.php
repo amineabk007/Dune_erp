@@ -23,6 +23,14 @@ class StoreUserRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:30'],
             'password' => ['required', 'confirmed', Password::defaults()],
+            'pin' => [
+                'nullable', 'digits:8',
+                function ($attribute, $value, $fail) {
+                    if (User::findByPin($value)) {
+                        $fail('Ce code PIN est déjà utilisé par un autre utilisateur.');
+                    }
+                },
+            ],
             'roles' => ['required', 'array', 'min:1'],
             'roles.*' => ['string', 'exists:roles,name'],
         ];

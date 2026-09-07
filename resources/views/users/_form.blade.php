@@ -36,6 +36,20 @@
 </div>
 
 <div class="mb-3">
+    <label for="pin" class="form-label">
+        Code PIN (8 chiffres)
+        @if ($user && $user->pin)
+            <span class="badge text-bg-success badge-status">configuré</span>
+        @endif
+    </label>
+    <input id="pin" name="pin" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8"
+           class="form-control @error('pin') is-invalid @enderror"
+           placeholder="{{ $user && $user->pin ? 'Laisser vide pour ne pas changer' : 'Optionnel' }}">
+    <div class="form-text">Permet à cet utilisateur de se connecter avec un code PIN plutôt que son mot de passe.</div>
+    @error('pin') <div class="invalid-feedback">{{ $message }}</div> @enderror
+</div>
+
+<div class="mb-3">
     <label class="form-label d-block">Rôles</label>
     @foreach ($roles as $role)
         <div class="form-check form-check-inline">

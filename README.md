@@ -492,6 +492,32 @@ rien sans un endroit où en voir le coût cumulé.
   plus une vérification en navigateur réel : bascule entre les deux
   modes du formulaire, perte déclarée, coût retrouvé dans le rapport.
 
+### Phase 16 — Connexion par code PIN ✅ Implémentée et testée
+
+Deuxième méthode de connexion, pensée pour le personnel qui partage une
+tablette en salle/cuisine et n'a pas à taper un mot de passe à chaque
+prise de service.
+
+- Code PIN à 8 chiffres, optionnel, configuré par un administrateur
+  depuis la fiche utilisateur (écran Utilisateurs) — un champ vide
+  laisse le PIN existant inchangé, exactement comme le mot de passe.
+  Stocké haché (`Hash`), jamais en clair.
+- Écran `/pin-login` avec pavé numérique tactile (0-9, effacer,
+  correction) sous un indicateur à 8 points ; la connexion se déclenche
+  automatiquement dès le 8ᵉ chiffre saisi — aucun clavier requis sur une
+  tablette. Un lien réciproque relie les deux écrans de connexion.
+- Un PIN étant haché, il ne peut pas être recherché par une requête
+  directe : `User::findByPin()` compare le code saisi au PIN de chaque
+  utilisateur actif qui en a un configuré — tout à fait viable pour
+  l'effectif d'un seul restaurant, et réutilisé pour empêcher qu'un
+  administrateur assigne le même PIN à deux comptes.
+- Comptes désactivés et débit de tentatives (5 par IP, comme la
+  connexion classique) s'appliquent de la même façon.
+- 12 tests supplémentaires (152 au total, tous verts contre MySQL réel),
+  plus une vérification de bout en bout en navigateur réel (Playwright) :
+  saisie au pavé numérique jusqu'au 8ᵉ chiffre, connexion automatique,
+  arrivée sur le tableau de bord.
+
 ## Licence
 
 Projet propriétaire — Dune Rooftop Marrakech.

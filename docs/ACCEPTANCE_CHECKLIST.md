@@ -144,6 +144,16 @@ phase.
       plats préparés et matières premières, avec le détail par
       ingrédient.
 
+## Connexion par code PIN (V1.4)
+
+- [x] Un administrateur peut configurer un code PIN à 8 chiffres par
+      utilisateur (optionnel, haché, laissé inchangé si le champ reste
+      vide) ; deux utilisateurs ne peuvent pas partager le même PIN.
+- [x] Écran de connexion dédié avec pavé numérique tactile, connexion
+      automatique dès le 8ᵉ chiffre saisi, sans clavier physique requis.
+- [x] Un compte désactivé ou un PIN incorrect sont refusés ; les
+      tentatives sont limitées à 5 par IP comme la connexion classique.
+
 ## Hors périmètre V1 (assumé, à considérer pour une V2)
 
 Ces points ont été identifiés pendant le développement mais

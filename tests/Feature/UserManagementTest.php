@@ -144,4 +144,52 @@ class UserManagementTest extends TestCase
         $log->action = 'update';
         $log->save();
     }
+
+    public function test_admin_can_set_a_pin_for_a_new_user(): void
+    {
+        $response = $this->actingAs($this->admin)->post('/users', [
+            'name' => 'Serveur PIN',
+            'email' => 'pin.test@dune-erp.test',
+            'password' => 'Secret1234!',
+            'password_confirmation' => 'Secret1234!',
+            'pin' => '12345678',
+            'roles' => ['serveur'],
+        ]);
+
+        $response->assertRedirect('/users');
+
+        $user = User::where('email', 'pin.test@dune-erp.test')->firstOrFail();
+        $this->assertTrue(Hash::check('12345678', $user->pin));
+    }
+
+    public function test_a_pin_already_used_by_another_user_is_rejected(): void
+    {
+        User::factory()->create(['pin' => Hash::make('12345678')]);
+
+        $response = $this->actingAs($this->admin)->post('/users', [
+            'name' => 'Test',
+            'email' => 'new.pin@dune-erp.test',
+            'password' => 'Secret1234!',
+            'password_confirmation' => 'Secret1234!',
+            'pin' => '12345678',
+            'roles' => ['serveur'],
+        ]);
+
+        $response->assertSessionHasErrors('pin');
+    }
+
+    public function test_admin_can_update_a_users_pin_without_touching_it_when_left_blank(): void
+    {
+        $user = User::factory()->create(['pin' => Hash::make('11112222')]);
+        $user->assignRole('serveur');
+
+        $this->actingAs($this->admin)->put("/users/{$user->id}", [
+            'name' => $user->name,
+            'email' => $user->email,
+            'roles' => ['serveur'],
+            'is_active' => 1,
+        ])->assertRedirect('/users');
+
+        $this->assertTrue(Hash::check('11112222', $user->fresh()->pin));
+    }
 }

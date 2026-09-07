@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\PinLoginController;
 use App\Http\Controllers\BarController;
 use App\Http\Controllers\CashSessionController;
 use App\Http\Controllers\CategoryController;
@@ -36,6 +37,9 @@ Route::redirect('/', '/dashboard');
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
+
+    Route::get('pin-login', [PinLoginController::class, 'create'])->name('pin-login');
+    Route::post('pin-login', [PinLoginController::class, 'store']);
 });
 
 Route::middleware('auth')->group(function () {

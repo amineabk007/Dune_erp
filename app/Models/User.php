@@ -6,6 +6,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -23,6 +24,7 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
+        'pin',
         'is_active',
     ];
 
@@ -33,6 +35,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'pin',
         'remember_token',
     ];
 
@@ -47,6 +50,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'password' => 'hashed',
+            'pin' => 'hashed',
             'is_active' => 'boolean',
         ];
     }
@@ -58,5 +62,21 @@ class User extends Authenticatable
     public function canAuthenticate(): bool
     {
         return $this->is_active;
+    }
+
+    /**
+     * PINs are hashed like passwords, so they can't be looked up with a
+     * direct WHERE — this checks each active user with a PIN configured.
+     * Fine for a single restaurant's staff roster (tens of accounts, not
+     * millions). Pass $except to exclude one user, e.g. when checking
+     * whether a newly typed PIN collides with someone else's.
+     */
+    public static function findByPin(string $pin, ?int $except = null): ?self
+    {
+        return static::where('is_active', true)
+            ->whereNotNull('pin')
+            ->when($except, fn ($query) => $query->where('id', '!=', $except))
+            ->get()
+            ->first(fn (self $user) => Hash::check($pin, $user->pin));
     }
 }

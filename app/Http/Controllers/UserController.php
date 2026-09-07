@@ -40,6 +40,7 @@ class UserController extends Controller
             'email' => $request->string('email'),
             'phone' => $request->input('phone'),
             'password' => Hash::make($request->string('password')),
+            'pin' => $request->filled('pin') ? Hash::make($request->string('pin')) : null,
             'is_active' => true,
         ]);
 
@@ -70,6 +71,10 @@ class UserController extends Controller
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->string('password'));
+        }
+
+        if ($request->filled('pin')) {
+            $user->pin = Hash::make($request->string('pin'));
         }
 
         // Self-deactivation is blocked regardless of what the form submits.
