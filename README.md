@@ -439,13 +439,16 @@ en cuisine pendant le coup de feu.
   salle affiche depuis combien de temps ("Occupée depuis 45 min"),
   calculé et rafraîchi côté navigateur toutes les 30 secondes — aucune
   requête serveur supplémentaire.
-- **Pertes de plats préparés** (`Déclarer une perte`, sous Stock) :
-  déclarer la casse d'un plat déjà préparé (tombé, brûlé, retourné)
-  décompte automatiquement les ingrédients de sa recette du stock —
-  exactement comme une vente — et affiche le coût matière perdu.
-  Accessible aux rôles `cuisine` et `bar` en plus de `manager`/`stock`
-  (`stock.adjust`), puisque ce sont eux qui constatent la perte en
-  premier.
+- **Pertes de plats préparés ou d'ingrédients bruts** (`Déclarer une
+  perte`, sous Stock) : un même écran, avec un bouton pour basculer entre
+  les deux cas. Pour un plat déjà préparé (tombé, brûlé, retourné), les
+  ingrédients de sa recette sont décomptés automatiquement du stock —
+  exactement comme une vente. Pour une matière première perdue
+  directement (périmée, cassée, renversée), l'ingrédient est décompté
+  directement. Le coût perdu est affiché dans les deux cas et alimente
+  le rapport Pertes (voir Phase 15). Accessible aux rôles `cuisine` et
+  `bar` en plus de `manager`/`stock` (`stock.adjust`), puisque ce sont
+  eux qui constatent la perte en premier.
 - **Transfert d'un article entre tables** (`orders.transfer_item`,
   réservé à `manager`) : contrairement au transfert de commande entière
   déjà existant, un seul article peut être déplacé vers la commande
@@ -469,6 +472,25 @@ en cuisine pendant le coup de feu.
   écran cuisine ouvert dans un onglet, commande envoyée depuis un
   processus séparé, bannière sonore confirmée à l'apparition du nouvel
   article groupé sous sa propre table.
+
+### Phase 15 — Rapport des pertes ✅ Implémentée et testée
+
+Complément direct de la Phase 14 : la déclaration de perte ne servait à
+rien sans un endroit où en voir le coût cumulé.
+
+- `StockService::recordWaste()` et `recordDishWaste()` enregistrent
+  désormais le coût unitaire de l'ingrédient au moment du mouvement
+  (`stock_movements.unit_cost`), pour que le rapport reste exact même si
+  le coût de l'ingrédient change ensuite (nouvel achat à un prix
+  différent).
+- Nouvelle section **Pertes (casse)** sur l'écran Rapports (période
+  filtrable, comme le reste des rapports) : coût total des pertes,
+  décomposé entre plats préparés et matières premières, avec le détail
+  par ingrédient. Visible par `admin`, `direction` et `manager`
+  (permission `reports.view` déjà en place, aucune nouvelle permission).
+- 3 tests supplémentaires (140 au total, tous verts contre MySQL réel),
+  plus une vérification en navigateur réel : bascule entre les deux
+  modes du formulaire, perte déclarée, coût retrouvé dans le rapport.
 
 ## Licence
 

@@ -123,9 +123,10 @@ phase.
 
 - [x] Chaque table occupée affiche depuis combien de temps, rafraîchi
       automatiquement sans requête serveur supplémentaire.
-- [x] Déclarer la perte d'un plat préparé décompte les ingrédients de sa
-      recette du stock et affiche le coût matière perdu ; accessible aux
-      rôles cuisine et bar en plus de manager/stock.
+- [x] Déclarer une perte, au choix pour un plat préparé (décompte les
+      ingrédients de sa recette) ou directement pour un ingrédient brut ;
+      le coût perdu est affiché dans les deux cas ; accessible aux rôles
+      cuisine et bar en plus de manager/stock.
 - [x] Un manager peut transférer un seul article vers la commande ouverte
       d'une autre table (totaux des deux commandes recalculés) ; un
       serveur sans la permission dédiée ne le peut pas.
@@ -138,6 +139,10 @@ phase.
 - [x] Les écrans cuisine et bar regroupent les articles par commande sous
       la table concernée, avec une couleur cohérente par table entre les
       deux écrans.
+- [x] Le rapport Pertes (écran Rapports, visible admin/direction/manager)
+      montre le coût total des pertes sur la période, décomposé entre
+      plats préparés et matières premières, avec le détail par
+      ingrédient.
 
 ## Hors périmètre V1 (assumé, à considérer pour une V2)
 
