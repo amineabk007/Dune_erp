@@ -133,6 +133,30 @@
                 @endforelse
             </tbody>
         </table>
+
+        <div class="card-header border-top">Pertes par plat</div>
+        <table class="table table-sm mb-0">
+            <thead>
+                <tr>
+                    <th>Plat</th>
+                    <th>Motif</th>
+                    <th>Date</th>
+                    <th class="text-end">Coût</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($waste['dish_events'] as $event)
+                    <tr>
+                        <td>{{ $event['product'] }}</td>
+                        <td>{{ $event['reason'] }}</td>
+                        <td>{{ $event['at']->format('d/m/Y H:i') }}</td>
+                        <td class="text-end">{{ number_format($event['cost'], 2) }} DH</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" class="text-muted">Aucun plat perdu sur la période.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 
     <div class="card">

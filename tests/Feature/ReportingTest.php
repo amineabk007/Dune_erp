@@ -124,6 +124,32 @@ class ReportingTest extends TestCase
         $this->assertSame(15.0, $summary['ingredient_cost']);
         $this->assertSame(12.0, $summary['by_ingredient']['Farine']['cost']);
         $this->assertSame(15.0, $summary['by_ingredient']['Huile']['cost']);
+
+        $this->assertCount(1, $summary['dish_events']);
+        $this->assertSame('Couscous', $summary['dish_events'][0]['product']);
+        $this->assertSame('Tombé', $summary['dish_events'][0]['reason']);
+        $this->assertSame(12.0, $summary['dish_events'][0]['cost']);
+    }
+
+    public function test_waste_summary_lists_each_dish_declaration_separately_with_its_own_reason(): void
+    {
+        $category = Category::factory()->create();
+        $product = Product::factory()->create(['category_id' => $category->id, 'name' => 'Tajine']);
+        $meat = Ingredient::factory()->create(['current_stock' => 50, 'unit_cost' => 20]);
+
+        $recipe = Recipe::factory()->create(['product_id' => $product->id, 'yield_quantity' => 1]);
+        $recipe->items()->create(['ingredient_id' => $meat->id, 'quantity' => 1]);
+
+        $stock = app(StockService::class);
+        $stock->recordDishWaste($product, $this->manager, 1, 'Tombé au sol');
+        $stock->recordDishWaste($product, $this->manager, 1, 'Retourné par le client');
+
+        $summary = app(ReportService::class)->wasteSummary(now()->startOfDay(), now());
+
+        $this->assertCount(2, $summary['dish_events']);
+        $reasons = collect($summary['dish_events'])->pluck('reason')->all();
+        $this->assertContains('Tombé au sol', $reasons);
+        $this->assertContains('Retourné par le client', $reasons);
     }
 
     public function test_waste_summary_falls_back_to_the_ingredients_current_cost_when_unit_cost_was_not_snapshotted(): void

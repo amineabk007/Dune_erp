@@ -144,12 +144,33 @@ class ReportService
             })
             ->sortByDesc('cost');
 
+        // Each "Déclarer une perte" of a dish creates one StockMovement per
+        // recipe ingredient, all sharing the same reference (dish name),
+        // reason and timestamp — grouping on that triplet reconstitutes
+        // each individual declaration as one row, so a manager can see
+        // exactly which dish was lost and why.
+        $dishEvents = $dishWaste
+            ->groupBy(fn (StockMovement $m) => $m->reference.'|'.$m->reason.'|'.$m->created_at)
+            ->map(function (Collection $group) use ($cost) {
+                $first = $group->first();
+
+                return [
+                    'product' => $first->reference,
+                    'reason' => $first->reason,
+                    'cost' => round((float) $group->sum($cost), 2),
+                    'at' => $first->created_at,
+                ];
+            })
+            ->sortByDesc('at')
+            ->values();
+
         return [
             'total_cost' => round((float) $movements->sum($cost), 2),
             'dish_cost' => round((float) $dishWaste->sum($cost), 2),
             'ingredient_cost' => round((float) $ingredientWaste->sum($cost), 2),
             'movements_count' => $movements->count(),
             'by_ingredient' => $byIngredient,
+            'dish_events' => $dishEvents,
         ];
     }
 
