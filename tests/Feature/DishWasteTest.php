@@ -33,6 +33,7 @@ class DishWasteTest extends TestCase
         $recipe->items()->create(['ingredient_id' => $chicken->id, 'quantity' => 0.3]);
 
         $response = $this->actingAs($manager)->post('/stock/dish-waste', [
+            'type' => 'dish',
             'product_id' => $product->id,
             'quantity' => 2,
             'reason' => 'Tombé en cuisine',
@@ -70,6 +71,7 @@ class DishWasteTest extends TestCase
         $recipe->items()->create(['ingredient_id' => $ingredient->id, 'quantity' => 1]);
 
         $this->actingAs($cuisine)->post('/stock/dish-waste', [
+            'type' => 'dish',
             'product_id' => $product->id,
             'quantity' => 1,
             'reason' => 'Brûlé',
@@ -89,6 +91,7 @@ class DishWasteTest extends TestCase
         $product = Product::factory()->create(['category_id' => $category->id]);
 
         $this->actingAs($serveur)->post('/stock/dish-waste', [
+            'type' => 'dish',
             'product_id' => $product->id,
             'quantity' => 1,
             'reason' => 'Test',
@@ -106,9 +109,41 @@ class DishWasteTest extends TestCase
         $product = Product::factory()->create(['category_id' => $category->id]);
 
         $this->actingAs($manager)->post('/stock/dish-waste', [
+            'type' => 'dish',
             'product_id' => $product->id,
             'quantity' => 1,
             'reason' => 'Test',
         ])->assertSessionHasErrors('product_id');
+    }
+
+    public function test_declaring_a_raw_ingredient_waste_directly(): void
+    {
+        $this->seedRolesAndPermissions();
+
+        $manager = User::factory()->create();
+        $manager->assignRole('manager');
+
+        $oil = Ingredient::factory()->create(['current_stock' => 20, 'unit_cost' => 15]);
+
+        $response = $this->actingAs($manager)->post('/stock/dish-waste', [
+            'type' => 'ingredient',
+            'ingredient_id' => $oil->id,
+            'quantity' => 2,
+            'reason' => 'Bidon renversé',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertSame('18.000', (string) $oil->fresh()->current_stock);
+
+        $this->assertDatabaseHas('stock_movements', [
+            'ingredient_id' => $oil->id,
+            'type' => 'waste',
+            'quantity' => '-2.000',
+            'unit_cost' => '15.0000',
+            'reason' => 'Bidon renversé',
+        ]);
+
+        // cost = 2 * 15
+        $this->assertStringContainsString('30.00', session('status'));
     }
 }

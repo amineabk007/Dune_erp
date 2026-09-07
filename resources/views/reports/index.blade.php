@@ -95,6 +95,46 @@
         </div>
     </div>
 
+    <div class="card mb-4">
+        <div class="card-header">Pertes (casse)</div>
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <div class="col-md-4 col-sm-6">
+                    <div class="text-muted small">Coût total des pertes</div>
+                    <div class="fs-5 fw-bold text-danger">{{ number_format($waste['total_cost'], 2) }} DH</div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="text-muted small">dont plats préparés</div>
+                    <div class="fs-5 fw-bold">{{ number_format($waste['dish_cost'], 2) }} DH</div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="text-muted small">dont matières premières</div>
+                    <div class="fs-5 fw-bold">{{ number_format($waste['ingredient_cost'], 2) }} DH</div>
+                </div>
+            </div>
+        </div>
+        <table class="table table-sm mb-0">
+            <thead>
+                <tr>
+                    <th>Ingrédient</th>
+                    <th class="text-end">Quantité perdue</th>
+                    <th class="text-end">Coût</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($waste['by_ingredient'] as $ingredientName => $row)
+                    <tr>
+                        <td>{{ $ingredientName }}</td>
+                        <td class="text-end">{{ number_format($row['quantity'], 3) }}</td>
+                        <td class="text-end">{{ number_format($row['cost'], 2) }} DH</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="3" class="text-muted">Aucune perte sur la période.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
     <div class="card">
         <div class="card-header">Produits les plus vendus</div>
         <table class="table table-sm mb-0">

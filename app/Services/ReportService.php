@@ -8,6 +8,7 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Purchase;
 use App\Models\RestaurantTable;
+use App\Models\StockMovement;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 
@@ -107,6 +108,43 @@ class ReportService
             'total_expenses' => $expenses['total_expenses'],
             'purchases_received' => $expenses['purchases_received'],
             'net_result' => $netResult,
+        ];
+    }
+
+    /**
+     * Cost of everything wasted in the period (dish waste and direct
+     * ingredient waste both land as StockMovement type "waste", each with
+     * its unit_cost snapshotted at the time), split by source so a
+     * manager can tell "burnt/dropped plates" apart from "spoiled raw
+     * stock" at a glance.
+     */
+    public function wasteSummary(CarbonInterface $from, CarbonInterface $to): array
+    {
+        $movements = StockMovement::where('type', 'waste')
+            ->whereBetween('created_at', [$from, $to->endOfDay()])
+            ->with('ingredient')
+            ->get();
+
+        $cost = fn (StockMovement $m) => abs((float) $m->quantity) * (float) $m->unit_cost;
+
+        $dishWaste = $movements->filter(fn (StockMovement $m) => $m->reference !== null);
+        $ingredientWaste = $movements->filter(fn (StockMovement $m) => $m->reference === null);
+
+        $byIngredient = $movements->groupBy(fn (StockMovement $m) => $m->ingredient->name ?? '—')
+            ->map(function (Collection $group) use ($cost) {
+                return [
+                    'quantity' => round((float) $group->sum(fn (StockMovement $m) => abs((float) $m->quantity)), 3),
+                    'cost' => round((float) $group->sum($cost), 2),
+                ];
+            })
+            ->sortByDesc('cost');
+
+        return [
+            'total_cost' => round((float) $movements->sum($cost), 2),
+            'dish_cost' => round((float) $dishWaste->sum($cost), 2),
+            'ingredient_cost' => round((float) $ingredientWaste->sum($cost), 2),
+            'movements_count' => $movements->count(),
+            'by_ingredient' => $byIngredient,
         ];
     }
 

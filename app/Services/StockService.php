@@ -88,7 +88,10 @@ class StockService
             throw new DomainException('La quantité de casse doit être positive.');
         }
 
-        return $this->move($ingredient, 'waste', -$quantity, $user, $reason);
+        // unit_cost is snapshotted at the ingredient's current cost so the
+        // waste reports stay accurate even if the ingredient's cost later
+        // changes (e.g. a new purchase at a different price).
+        return $this->move($ingredient, 'waste', -$quantity, $user, $reason, null, (float) $ingredient->unit_cost);
     }
 
     /**
@@ -165,7 +168,8 @@ class StockService
                 -$consumed,
                 $user,
                 $reason,
-                $product->name
+                $product->name,
+                (float) $recipeItem->ingredient->unit_cost
             );
 
             $totalCost += $consumed * (float) $recipeItem->ingredient->unit_cost;

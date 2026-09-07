@@ -4,12 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Expense;
+use App\Models\Ingredient;
 use App\Models\Product;
+use App\Models\Recipe;
 use App\Models\User;
 use App\Services\CashSessionService;
 use App\Services\OrderService;
 use App\Services\PaymentService;
 use App\Services\ReportService;
+use App\Services\StockService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Concerns\SeedsRolesAndPermissions;
 use Tests\TestCase;
@@ -98,6 +101,42 @@ class ReportingTest extends TestCase
 
         $response->assertOk();
         $response->assertDontSee('CA du jour');
+    }
+
+    public function test_waste_summary_splits_dish_waste_from_raw_ingredient_waste(): void
+    {
+        $category = Category::factory()->create();
+        $product = Product::factory()->create(['category_id' => $category->id, 'name' => 'Couscous']);
+        $flour = Ingredient::factory()->create(['name' => 'Farine', 'current_stock' => 100, 'unit_cost' => 6]);
+        $oil = Ingredient::factory()->create(['name' => 'Huile', 'current_stock' => 20, 'unit_cost' => 15]);
+
+        $recipe = Recipe::factory()->create(['product_id' => $product->id, 'yield_quantity' => 1]);
+        $recipe->items()->create(['ingredient_id' => $flour->id, 'quantity' => 1]);
+
+        $stock = app(StockService::class);
+        $stock->recordDishWaste($product, $this->manager, 2, 'Tombé'); // 2 * 1 * 6 = 12
+        $stock->recordWaste($oil, $this->manager, 1, 'Renversé'); // 1 * 15 = 15
+
+        $summary = app(ReportService::class)->wasteSummary(now()->startOfDay(), now());
+
+        $this->assertSame(27.0, $summary['total_cost']);
+        $this->assertSame(12.0, $summary['dish_cost']);
+        $this->assertSame(15.0, $summary['ingredient_cost']);
+        $this->assertSame(12.0, $summary['by_ingredient']['Farine']['cost']);
+        $this->assertSame(15.0, $summary['by_ingredient']['Huile']['cost']);
+    }
+
+    public function test_a_role_without_reports_view_cannot_see_the_waste_report_section(): void
+    {
+        $category = Category::factory()->create();
+        $product = Product::factory()->create(['category_id' => $category->id, 'name' => 'Couscous']);
+        $flour = Ingredient::factory()->create(['current_stock' => 100, 'unit_cost' => 6]);
+        $recipe = Recipe::factory()->create(['product_id' => $product->id, 'yield_quantity' => 1]);
+        $recipe->items()->create(['ingredient_id' => $flour->id, 'quantity' => 1]);
+
+        app(StockService::class)->recordDishWaste($product, $this->manager, 1, 'Tombé');
+
+        $this->actingAs($this->manager)->get('/reports')->assertSee('Pertes (casse)');
     }
 
     public function test_a_role_without_reports_view_cannot_access_reports(): void

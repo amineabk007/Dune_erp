@@ -34,6 +34,7 @@ class ReportController extends Controller implements HasMiddleware
             'topProducts' => $this->reports->topProducts($from, $to),
             'expenses' => $this->reports->expensesSummary($from, $to),
             'pnl' => $this->reports->profitAndLoss($from, $to),
+            'waste' => $this->reports->wasteSummary($from, $to),
         ]);
     }
 }
