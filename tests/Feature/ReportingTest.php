@@ -126,6 +126,27 @@ class ReportingTest extends TestCase
         $this->assertSame(15.0, $summary['by_ingredient']['Huile']['cost']);
     }
 
+    public function test_waste_summary_falls_back_to_the_ingredients_current_cost_when_unit_cost_was_not_snapshotted(): void
+    {
+        $tomato = Ingredient::factory()->create(['name' => 'Tomates', 'current_stock' => 50, 'unit_cost' => 8]);
+
+        // Simulate an old waste movement recorded before unit_cost was
+        // snapshotted (unit_cost left at 0/null on the row itself).
+        \App\Models\StockMovement::create([
+            'ingredient_id' => $tomato->id,
+            'type' => 'waste',
+            'quantity' => -5,
+            'unit_cost' => null,
+            'reason' => 'Ancienne perte',
+        ]);
+
+        $summary = app(ReportService::class)->wasteSummary(now()->startOfDay(), now());
+
+        // 5kg * 8 DH (current ingredient cost, used as fallback) = 40
+        $this->assertSame(40.0, $summary['total_cost']);
+        $this->assertSame(40.0, $summary['by_ingredient']['Tomates']['cost']);
+    }
+
     public function test_a_role_without_reports_view_cannot_see_the_waste_report_section(): void
     {
         $category = Category::factory()->create();

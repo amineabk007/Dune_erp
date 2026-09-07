@@ -125,7 +125,12 @@ class ReportService
             ->with('ingredient')
             ->get();
 
-        $cost = fn (StockMovement $m) => abs((float) $m->quantity) * (float) $m->unit_cost;
+        // Fall back to the ingredient's current cost for older movements
+        // recorded before unit_cost was snapshotted on waste (or any row
+        // where it's still 0/null) — better an approximation than a
+        // silent 0.00 DH in the report.
+        $cost = fn (StockMovement $m) => abs((float) $m->quantity)
+            * ((float) $m->unit_cost ?: (float) ($m->ingredient->unit_cost ?? 0));
 
         $dishWaste = $movements->filter(fn (StockMovement $m) => $m->reference !== null);
         $ingredientWaste = $movements->filter(fn (StockMovement $m) => $m->reference === null);
