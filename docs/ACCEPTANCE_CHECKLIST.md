@@ -154,6 +154,15 @@ phase.
 - [x] Un compte désactivé ou un PIN incorrect sont refusés ; les
       tentatives sont limitées à 5 par IP comme la connexion classique.
 
+## Menu latéral adaptatif (V1.5)
+
+- [x] Sur téléphone/tablette portrait, le menu latéral est masqué par
+      défaut et s'ouvre en panneau coulissant via une icône ☰ ; le
+      contenu de chaque page protégée utilise toute la largeur de
+      l'écran (plus de texte coupé ou de bouton tronqué).
+- [x] Sur ordinateur/tablette paysage, le menu reste fixe et visible en
+      permanence, apparence inchangée.
+
 ## Hors périmètre V1 (assumé, à considérer pour une V2)
 
 Ces points ont été identifiés pendant le développement mais

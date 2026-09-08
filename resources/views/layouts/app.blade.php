@@ -11,8 +11,14 @@
 </head>
 <body>
     <div class="d-flex" style="min-height: 100vh;">
-        <nav class="dune-sidebar p-3" style="width: 250px; flex-shrink: 0;">
-            <a href="{{ route('dashboard') }}" class="dune-brand text-decoration-none d-block mb-4 fs-4">
+        <nav class="dune-sidebar offcanvas-lg offcanvas-start p-3" tabindex="-1" id="sidebarOffcanvas"
+             style="width: 250px; flex-shrink: 0; --bs-offcanvas-width: 250px;">
+            <div class="d-flex justify-content-between align-items-center d-lg-none mb-3">
+                <span class="dune-brand fs-4">DUNE ERP</span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        data-bs-target="#sidebarOffcanvas" aria-label="Fermer"></button>
+            </div>
+            <a href="{{ route('dashboard') }}" class="dune-brand text-decoration-none d-none d-lg-block mb-4 fs-4">
                 DUNE ERP
             </a>
             <ul class="nav nav-pills flex-column mb-auto">
@@ -206,10 +212,16 @@
             </ul>
         </nav>
 
-        <div class="flex-grow-1">
+        <div class="flex-grow-1" style="min-width: 0;">
             <header class="border-bottom bg-white">
                 <div class="d-flex justify-content-between align-items-center px-4 py-2">
-                    <h1 class="h5 mb-0">@yield('title', 'Dashboard')</h1>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary d-lg-none"
+                                data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-label="Menu">
+                            &#9776;
+                        </button>
+                        <h1 class="h5 mb-0">@yield('title', 'Dashboard')</h1>
+                    </div>
                     <div class="d-flex align-items-center gap-3">
                         <span class="text-muted small">
                             {{ auth()->user()->name }}

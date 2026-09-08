@@ -15,10 +15,14 @@ $font-family-sans-serif: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
 
 @import "bootstrap/scss/bootstrap";
 
+// !important beats Bootstrap's own .offcanvas-lg reset (a 2-class selector,
+// so higher specificity than .dune-sidebar alone), which otherwise clears
+// the background back to transparent once the sidebar becomes static at
+// the lg breakpoint and up.
 .dune-sidebar {
     min-height: 100vh;
-    background: $dark;
-    color: $light;
+    background: $dark !important;
+    color: $light !important;
 }
 
 .dune-sidebar .nav-link {

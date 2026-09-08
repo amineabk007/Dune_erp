@@ -523,6 +523,26 @@ prise de service.
   saisie au pavé numérique jusqu'au 8ᵉ chiffre, connexion automatique,
   arrivée sur le tableau de bord.
 
+### Phase 17 — Menu latéral adaptatif (mobile) ✅ Implémentée et testée
+
+Le menu latéral fixe (250px) prenait la moitié de l'écran sur un
+téléphone, écrasant le contenu de toutes les pages protégées (textes
+coupés, boutons tronqués).
+
+- Le menu latéral devient un panneau coulissant (`offcanvas` Bootstrap)
+  en dessous du seuil `lg` : masqué par défaut sur mobile/tablette
+  portrait, ouvert via une icône ☰ dans l'en-tête, refermé via une croix
+  dans le panneau. Au-delà du seuil `lg` (ordinateur, tablette paysage),
+  le comportement est inchangé : menu fixe, toujours visible.
+- Correction associée : le fond sombre du menu était neutralisé par une
+  règle Bootstrap plus spécifique une fois le panneau rendu statique en
+  desktop — fixé par une priorité explicite sur les couleurs du menu.
+- Vérifié sur tableau de bord, cuisine, commandes et plan de salle, à
+  largeur téléphone (390px) et ordinateur (1440px) : aucune régression
+  desktop, plus de texte tronqué sur mobile.
+- Changement d'interface pur (Blade + SCSS) : les 152 tests existants
+  restent verts, aucun test supplémentaire nécessaire.
+
 ## Licence
 
 Projet propriétaire — Dune Rooftop Marrakech.
