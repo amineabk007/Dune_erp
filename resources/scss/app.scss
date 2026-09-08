@@ -21,6 +21,7 @@ $font-family-sans-serif: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
 // the lg breakpoint and up.
 .dune-sidebar {
     min-height: 100vh;
+    overflow-y: auto;
     background: $dark !important;
     color: $light !important;
 }
