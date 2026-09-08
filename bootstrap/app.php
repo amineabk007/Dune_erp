@@ -19,6 +19,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('web', EnsureUserIsActive::class);
         $middleware->append(SecurityHeaders::class);
 
+        // PIN login is the primary screen staff see (shared tablets on the
+        // floor); e-mail + password stays reachable via the link on that
+        // screen, mainly for initial/admin setup.
+        $middleware->redirectGuestsTo(fn () => route('pin-login'));
+
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,

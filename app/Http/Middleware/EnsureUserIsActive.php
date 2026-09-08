@@ -24,7 +24,7 @@ class EnsureUserIsActive
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('login')->withErrors([
+            return redirect()->route('pin-login')->withErrors([
                 'email' => 'Ce compte a été désactivé.',
             ]);
         }

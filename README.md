@@ -513,6 +513,11 @@ prise de service.
   administrateur assigne le même PIN à deux comptes.
 - Comptes désactivés et débit de tentatives (5 par IP, comme la
   connexion classique) s'appliquent de la même façon.
+- Le code PIN est l'écran d'accueil par défaut : un visiteur non connecté
+  (y compris `/` et toute page protégée) atterrit sur `/pin-login`, pas
+  sur l'écran e-mail/mot de passe — celui-ci reste accessible via le lien
+  réciproque, pour la configuration initiale ou un accès administrateur
+  depuis un poste personnel.
 - 12 tests supplémentaires (152 au total, tous verts contre MySQL réel),
   plus une vérification de bout en bout en navigateur réel (Playwright) :
   saisie au pavé numérique jusqu'au 8ᵉ chiffre, connexion automatique,

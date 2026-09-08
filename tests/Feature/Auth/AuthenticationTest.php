@@ -85,7 +85,7 @@ class AuthenticationTest extends TestCase
         $response = $this->actingAs($user)->post('/logout');
 
         $this->assertGuest();
-        $response->assertRedirect('/login');
+        $response->assertRedirect('/pin-login');
     }
 
     public function test_a_user_deactivated_mid_session_is_logged_out_on_next_request(): void
@@ -101,6 +101,6 @@ class AuthenticationTest extends TestCase
         $response = $this->get('/dashboard');
 
         $this->assertGuest();
-        $response->assertRedirect('/login');
+        $response->assertRedirect('/pin-login');
     }
 }
