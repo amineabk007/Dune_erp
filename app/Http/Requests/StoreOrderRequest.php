@@ -16,7 +16,7 @@ class StoreOrderRequest extends FormRequest
         return [
             'table_id' => ['nullable', 'exists:restaurant_tables,id'],
             'customer_id' => ['nullable', 'exists:customers,id'],
-            'covers' => ['nullable', 'integer', 'min:1', 'max:200'],
+            'covers' => ['required', 'integer', 'min:1', 'max:200'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
     }

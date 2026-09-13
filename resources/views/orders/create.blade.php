@@ -21,8 +21,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="covers" class="form-label">Nombre de couverts</label>
-                    <input type="number" id="covers" name="covers" min="1" max="200"
+                    <label for="covers" class="form-label">Nombre de couverts <span class="text-danger">*</span></label>
+                    <input type="number" id="covers" name="covers" min="1" max="200" required
                            class="form-control @error('covers') is-invalid @enderror"
                            value="{{ old('covers') }}">
                     @error('covers') <div class="invalid-feedback">{{ $message }}</div> @enderror

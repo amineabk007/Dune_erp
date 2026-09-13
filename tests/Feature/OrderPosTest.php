@@ -40,7 +40,7 @@ class OrderPosTest extends TestCase
 
     public function test_creating_an_order_on_a_table_occupies_it(): void
     {
-        $response = $this->actingAs($this->serveur)->post('/orders', ['table_id' => $this->table->id]);
+        $response = $this->actingAs($this->serveur)->post('/orders', ['table_id' => $this->table->id, 'covers' => 2]);
 
         $response->assertRedirect();
         $order = Order::firstOrFail();
@@ -54,7 +54,7 @@ class OrderPosTest extends TestCase
     {
         $this->table->update(['status' => 'occupied']);
 
-        $response = $this->actingAs($this->serveur)->post('/orders', ['table_id' => $this->table->id]);
+        $response = $this->actingAs($this->serveur)->post('/orders', ['table_id' => $this->table->id, 'covers' => 2]);
 
         $response->assertSessionHasErrors('table_id');
     }
@@ -174,16 +174,21 @@ class OrderPosTest extends TestCase
         $this->assertSame(4, Order::firstOrFail()->covers);
     }
 
-    public function test_covers_is_optional_and_bounded(): void
+    public function test_covers_is_required_and_bounded(): void
     {
         $this->actingAs($this->serveur)
             ->post('/orders', ['table_id' => $this->table->id])
-            ->assertRedirect();
-        $this->assertNull(Order::firstOrFail()->covers);
+            ->assertSessionHasErrors('covers');
+        $this->assertDatabaseCount('orders', 0);
 
         $this->actingAs($this->serveur)
             ->post('/orders', ['covers' => 0])
             ->assertSessionHasErrors('covers');
+
+        $this->actingAs($this->serveur)
+            ->post('/orders', ['covers' => 2])
+            ->assertRedirect();
+        $this->assertSame(2, Order::firstOrFail()->covers);
     }
 
     public function test_item_and_product_prices_display_tax_inclusive(): void
