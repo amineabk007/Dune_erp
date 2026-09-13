@@ -56,6 +56,21 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="text-muted small">Temps moyen de service</div>
+                        <div class="fs-4 fw-bold">
+                            @if (is_null($kpis['average_service_minutes']))
+                                —
+                            @else
+                                {{ number_format($kpis['average_service_minutes'], 1) }} min
+                            @endif
+                        </div>
+                        <div class="text-muted small">envoi cuisine/bar → servi</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="card mb-4">

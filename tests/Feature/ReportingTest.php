@@ -104,6 +104,35 @@ class ReportingTest extends TestCase
         $this->assertSame(6, $kpis['today_covers']);
     }
 
+    public function test_dashboard_kpis_include_average_service_time(): void
+    {
+        $category = Category::factory()->create();
+        $product = Product::factory()->create(['category_id' => $category->id, 'price' => 50, 'tax_rate' => 0]);
+
+        $orderA = app(OrderService::class)->createOrder($this->manager, null, null, null);
+        app(OrderService::class)->addItem($orderA->fresh(), $product, 1);
+        app(OrderService::class)->sendToProduction($orderA->fresh());
+        $orderA->update(['sent_at' => now()->subMinutes(20)]);
+        app(OrderService::class)->markServed($orderA->fresh());
+
+        $orderB = app(OrderService::class)->createOrder($this->manager, null, null, null);
+        app(OrderService::class)->addItem($orderB->fresh(), $product, 1);
+        app(OrderService::class)->sendToProduction($orderB->fresh());
+        $orderB->update(['sent_at' => now()->subMinutes(10)]);
+        app(OrderService::class)->markServed($orderB->fresh());
+
+        $kpis = app(ReportService::class)->dashboardKpis();
+
+        $this->assertSame(15.0, $kpis['average_service_minutes']);
+    }
+
+    public function test_average_service_time_is_null_when_nothing_has_been_served_today(): void
+    {
+        $kpis = app(ReportService::class)->dashboardKpis();
+
+        $this->assertNull($kpis['average_service_minutes']);
+    }
+
     public function test_dashboard_hides_kpis_for_a_role_without_reports_view(): void
     {
         $serveur = User::factory()->create();

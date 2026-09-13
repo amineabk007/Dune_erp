@@ -592,6 +592,21 @@ Quatre ajustements demandés après usage réel de l'écran de caisse.
   + 10% TVA) affiché correctement à 40.00 DH partout, redirection
   confirmée après envoi en production.
 
+### Phase 21 — Redirection après encaissement, statut cuisine/bar sur le plan de salle, temps moyen de service ✅ Implémentée et testée
+
+- "Encaisser" redirige désormais vers le plan de salle, comme "Envoyer
+  en cuisine/bar".
+- Chaque table occupée du plan de salle affiche le statut de sa
+  commande (Ouverte / Envoyée / En préparation / Prête / Servie), pas
+  seulement le statut physique de la table.
+- Les commandes enregistrent maintenant `sent_at` (premier envoi en
+  cuisine/bar) et `served_at` (passage à "servie"). Le tableau de bord
+  affiche un nouveau KPI "Temps moyen de service" (moyenne de
+  `served_at - sent_at` sur les commandes du jour).
+- 5 tests supplémentaires (169 au total, tous verts contre MySQL réel),
+  plus une vérification en navigateur réel (Playwright) : badge de
+  statut visible sur le plan de salle après envoi en production.
+
 ## Licence
 
 Projet propriétaire — Dune Rooftop Marrakech.

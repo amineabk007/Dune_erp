@@ -87,4 +87,20 @@ class FloorPlanTest extends TestCase
         $response->assertOk();
         $response->assertSee('data-occupied-since="'.$order->created_at->toIso8601String().'"', false);
     }
+
+    public function test_an_occupied_table_shows_the_orders_kitchen_bar_status(): void
+    {
+        $table = RestaurantTable::factory()->create(['zone_id' => $this->zone->id, 'status' => 'available']);
+        $order = app(OrderService::class)->createOrder($this->serveur, $table->id, null, null);
+
+        $response = $this->actingAs($this->serveur)->get('/floor-plan');
+        $response->assertOk();
+        $response->assertSee('Ouverte');
+
+        app(OrderService::class)->sendToProduction($order);
+
+        $response = $this->actingAs($this->serveur)->get('/floor-plan');
+        $response->assertOk();
+        $response->assertSee('Envoyée');
+    }
 }

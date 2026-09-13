@@ -278,14 +278,15 @@ class OrderBuilder extends Component
                 (float) ($this->paymentAmount ?: 0),
                 $this->paymentReference ?: null
             );
-            $this->status = 'Paiement enregistré.';
-            $this->paymentAmount = '';
-            $this->paymentReference = '';
         } catch (DomainException $e) {
             $this->error = $e->getMessage();
+            $this->refreshOrder();
+
+            return;
         }
 
-        $this->refreshOrder();
+        session()->flash('status', 'Paiement enregistré.');
+        $this->redirect(route('floor-plan.index'));
     }
 
     public function refundPayment(int $paymentId): void

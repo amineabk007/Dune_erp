@@ -185,6 +185,14 @@ phase.
       addition) sont ceux de la carte (TTC), pas le prix hors taxe.
 - [x] "Envoyer en cuisine/bar" redirige vers le plan de salle.
 
+## Statut cuisine/bar et temps de service (V1.8)
+
+- [x] "Encaisser" redirige vers le plan de salle.
+- [x] Chaque table occupée affiche le statut de sa commande (Ouverte /
+      Envoyée / En préparation / Prête / Servie).
+- [x] Le tableau de bord affiche le temps moyen entre l'envoi en
+      cuisine/bar et le passage à "servie" pour les commandes du jour.
+
 ## Hors périmètre V1 (assumé, à considérer pour une V2)
 
 Ces points ont été identifiés pendant le développement mais

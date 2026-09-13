@@ -209,5 +209,37 @@ class OrderPosTest extends TestCase
             ->assertRedirect(route('floor-plan.index'));
 
         $this->assertSame('sent', $order->fresh()->status);
+        $this->assertNotNull($order->fresh()->sent_at);
+    }
+
+    public function test_recording_a_payment_redirects_to_the_floor_plan(): void
+    {
+        $manager = User::factory()->create();
+        $manager->assignRole('manager');
+
+        $order = app(OrderService::class)->createOrder($manager, $this->table->id, null, null);
+        app(OrderService::class)->addItem($order, $this->product, 1);
+        app(\App\Services\CashSessionService::class)->open($manager, 0);
+
+        \Livewire\Livewire::actingAs($manager)
+            ->test(\App\Livewire\OrderBuilder::class, ['order' => $order->fresh()])
+            ->set('paymentAmount', '120')
+            ->call('recordPayment')
+            ->assertRedirect(route('floor-plan.index'));
+
+        $this->assertSame('120.00', (string) $order->fresh()->amount_paid);
+    }
+
+    public function test_marking_an_order_served_records_the_service_timestamps(): void
+    {
+        $order = app(OrderService::class)->createOrder($this->serveur, null, null, null);
+        app(OrderService::class)->addItem($order, $this->product, 1);
+
+        app(OrderService::class)->sendToProduction($order->fresh());
+        $this->assertNotNull($order->fresh()->sent_at);
+        $this->assertNull($order->fresh()->served_at);
+
+        app(OrderService::class)->markServed($order->fresh());
+        $this->assertNotNull($order->fresh()->served_at);
     }
 }

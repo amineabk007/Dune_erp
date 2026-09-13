@@ -11,6 +11,20 @@
             'cleaning' => 'secondary',
             'inactive' => 'dark',
         ];
+        $orderStatusLabels = [
+            'open' => 'Ouverte',
+            'sent' => 'Envoyée',
+            'preparing' => 'En préparation',
+            'ready' => 'Prête',
+            'served' => 'Servie',
+        ];
+        $orderStatusColors = [
+            'open' => 'secondary',
+            'sent' => 'info',
+            'preparing' => 'warning',
+            'ready' => 'success',
+            'served' => 'primary',
+        ];
     @endphp
 
     @foreach ($zones as $zone)
@@ -26,6 +40,11 @@
                             <span class="badge text-bg-{{ $statusColors[$table->status] }} badge-status my-1">{{ $table->status }}</span>
 
                             @if ($order)
+                                <div>
+                                    <span class="badge text-bg-{{ $orderStatusColors[$order->status] ?? 'secondary' }} badge-status">
+                                        {{ $orderStatusLabels[$order->status] ?? $order->status }}
+                                    </span>
+                                </div>
                                 <div class="text-muted small" data-occupied-since="{{ $order->created_at->toIso8601String() }}" data-elapsed>&nbsp;</div>
                                 <a href="{{ route('orders.show', $order) }}" class="btn btn-outline-primary btn-sm d-block mt-1">
                                     Voir commande

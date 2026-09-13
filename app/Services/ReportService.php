@@ -191,6 +191,15 @@ class ReportService
             ->whereNotIn('status', ['cancelled'])
             ->sum('covers');
 
+        $servedToday = Order::whereNotNull('sent_at')
+            ->whereNotNull('served_at')
+            ->whereDate('sent_at', $today)
+            ->get(['sent_at', 'served_at']);
+
+        $averageServiceMinutes = $servedToday->isNotEmpty()
+            ? round($servedToday->avg(fn (Order $o) => $o->sent_at->diffInSeconds($o->served_at)) / 60, 1)
+            : null;
+
         return [
             'today_revenue' => round($todayRevenue, 2),
             'open_orders' => $openOrders,
@@ -199,6 +208,7 @@ class ReportService
             'low_stock_count' => $this->stock->lowStock()->count(),
             'cash_session' => $this->cashSessions->currentOpenSession(),
             'today_covers' => $todayCovers,
+            'average_service_minutes' => $averageServiceMinutes,
         ];
     }
 }

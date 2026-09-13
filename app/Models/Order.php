@@ -12,6 +12,7 @@ class Order extends Model
 
     protected $fillable = [
         'order_number', 'table_id', 'customer_id', 'covers', 'user_id', 'status',
+        'sent_at', 'served_at',
         'subtotal', 'discount_amount', 'discount_reason', 'discount_by',
         'tax_amount', 'total', 'amount_paid', 'notes',
         'cancelled_at', 'cancelled_by', 'cancel_reason',
@@ -25,6 +26,8 @@ class Order extends Model
             'tax_amount' => 'decimal:2',
             'total' => 'decimal:2',
             'amount_paid' => 'decimal:2',
+            'sent_at' => 'datetime',
+            'served_at' => 'datetime',
             'cancelled_at' => 'datetime',
         ];
     }

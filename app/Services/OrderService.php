@@ -229,7 +229,7 @@ class OrderService
             ]);
 
             if ($order->status === 'open') {
-                $order->update(['status' => 'sent']);
+                $order->update(['status' => 'sent', 'sent_at' => now()]);
             }
 
             return $order->fresh();
@@ -242,7 +242,7 @@ class OrderService
             throw new DomainException('Cette commande ne peut pas être marquée servie depuis son état actuel.');
         }
 
-        $order->update(['status' => 'served']);
+        $order->update(['status' => 'served', 'served_at' => now()]);
 
         return $order->fresh();
     }
