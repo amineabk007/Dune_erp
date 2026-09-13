@@ -26,7 +26,7 @@
                         <span>{{ $item->quantity }} × {{ $item->product_name }}
                             <span class="badge text-bg-light border badge-status">{{ $item->status }}</span>
                         </span>
-                        <span>{{ number_format($item->line_total, 2) }} DH</span>
+                        <span>{{ number_format($item->lineTotalTtc(), 2) }} DH</span>
                     </li>
                 @empty
                     <li class="list-group-item text-muted">Aucun article.</li>
@@ -66,7 +66,7 @@
                                                 class="dune-pos-prod-btn"
                                                 style="background-color: {{ $this->categoryColor($product->category_id) }};">
                                             <span class="dune-pos-prod-name">{{ $product->name }}</span>
-                                            <span class="dune-pos-prod-price">{{ number_format($product->price, 2) }} DH</span>
+                                            <span class="dune-pos-prod-price">{{ number_format($product->priceTtc(), 2) }} DH</span>
                                         </button>
                                     @empty
                                         <p class="text-muted p-3 mb-0">Aucun produit trouvé.</p>
@@ -120,13 +120,13 @@
                                     <div>
                                         <div class="fw-semibold">{{ $item->product_name }}</div>
                                         <div class="text-muted small">
-                                            {{ number_format($item->unit_price, 2) }} DH ·
+                                            {{ number_format($item->unitPriceTtc(), 2) }} DH ·
                                             <span class="badge text-bg-light border badge-status">{{ $item->status }}</span>
                                             <span class="badge text-bg-light border badge-status">{{ $item->destination }}</span>
                                         </div>
                                     </div>
                                     <div class="text-end">
-                                        <div class="fw-semibold">{{ number_format($item->line_total, 2) }} DH</div>
+                                        <div class="fw-semibold">{{ number_format($item->lineTotalTtc(), 2) }} DH</div>
                                         @can('orders.update')
                                             @if ($item->status === 'new')
                                                 <div class="btn-group btn-group-sm mt-1">

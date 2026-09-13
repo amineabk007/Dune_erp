@@ -56,7 +56,8 @@ class OrderController extends Controller implements HasMiddleware
                 $request->user(),
                 $request->input('table_id') ? (int) $request->input('table_id') : null,
                 $request->input('customer_id') ? (int) $request->input('customer_id') : null,
-                $request->input('notes')
+                $request->input('notes'),
+                $request->input('covers') ? (int) $request->input('covers') : null
             );
         } catch (DomainException $e) {
             return back()->withErrors(['table_id' => $e->getMessage()]);

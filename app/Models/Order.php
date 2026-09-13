@@ -11,7 +11,7 @@ class Order extends Model
     public const STATUSES = ['open', 'sent', 'preparing', 'ready', 'served', 'paid', 'cancelled'];
 
     protected $fillable = [
-        'order_number', 'table_id', 'customer_id', 'user_id', 'status',
+        'order_number', 'table_id', 'customer_id', 'covers', 'user_id', 'status',
         'subtotal', 'discount_amount', 'discount_reason', 'discount_by',
         'tax_amount', 'total', 'amount_paid', 'notes',
         'cancelled_at', 'cancelled_by', 'cancel_reason',

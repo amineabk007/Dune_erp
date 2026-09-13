@@ -162,4 +162,52 @@ class OrderPosTest extends TestCase
         $response = $this->actingAs($this->serveur)->delete("/orders/{$order->id}/items/{$item2->id}");
         $response->assertSessionHasErrors('item');
     }
+
+    public function test_creating_an_order_records_the_number_of_covers(): void
+    {
+        $response = $this->actingAs($this->serveur)->post('/orders', [
+            'table_id' => $this->table->id,
+            'covers' => 4,
+        ]);
+
+        $response->assertRedirect();
+        $this->assertSame(4, Order::firstOrFail()->covers);
+    }
+
+    public function test_covers_is_optional_and_bounded(): void
+    {
+        $this->actingAs($this->serveur)
+            ->post('/orders', ['table_id' => $this->table->id])
+            ->assertRedirect();
+        $this->assertNull(Order::firstOrFail()->covers);
+
+        $this->actingAs($this->serveur)
+            ->post('/orders', ['covers' => 0])
+            ->assertSessionHasErrors('covers');
+    }
+
+    public function test_item_and_product_prices_display_tax_inclusive(): void
+    {
+        // price is stored tax-exclusive (100 HT, 20% tax -> 120 TTC).
+        $this->assertSame(120.0, $this->product->priceTtc());
+
+        $order = app(OrderService::class)->createOrder($this->serveur, null, null, null);
+        $item = app(OrderService::class)->addItem($order, $this->product, 2);
+
+        $this->assertSame(120.0, $item->unitPriceTtc());
+        $this->assertSame(240.0, $item->lineTotalTtc());
+    }
+
+    public function test_sending_to_production_redirects_to_the_floor_plan(): void
+    {
+        $order = app(OrderService::class)->createOrder($this->serveur, $this->table->id, null, null);
+        app(OrderService::class)->addItem($order, $this->product, 1);
+
+        \Livewire\Livewire::actingAs($this->serveur)
+            ->test(\App\Livewire\OrderBuilder::class, ['order' => $order])
+            ->call('sendToProduction')
+            ->assertRedirect(route('floor-plan.index'));
+
+        $this->assertSame('sent', $order->fresh()->status);
+    }
 }

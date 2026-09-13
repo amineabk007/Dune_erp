@@ -187,6 +187,10 @@ class ReportService
         $totalTables = RestaurantTable::where('status', '!=', 'inactive')->count();
         $occupiedTables = RestaurantTable::where('status', 'occupied')->count();
 
+        $todayCovers = (int) Order::whereDate('created_at', $today)
+            ->whereNotIn('status', ['cancelled'])
+            ->sum('covers');
+
         return [
             'today_revenue' => round($todayRevenue, 2),
             'open_orders' => $openOrders,
@@ -194,6 +198,7 @@ class ReportService
             'total_tables' => $totalTables,
             'low_stock_count' => $this->stock->lowStock()->count(),
             'cash_session' => $this->cashSessions->currentOpenSession(),
+            'today_covers' => $todayCovers,
         ];
     }
 }

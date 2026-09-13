@@ -30,6 +30,16 @@ class Product extends Model
         return Attribute::get(fn () => $this->photo_path ? Storage::disk('public')->url($this->photo_path) : null);
     }
 
+    /**
+     * The price customers actually recognize from the printed menu — the
+     * stored `price` is tax-exclusive so order totals can add tax without
+     * double-counting, but the catalogue must display the menu's own price.
+     */
+    public function priceTtc(): float
+    {
+        return round((float) $this->price * (1 + (float) $this->tax_rate / 100), 2);
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);

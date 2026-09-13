@@ -21,6 +21,14 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="covers" class="form-label">Nombre de couverts</label>
+                    <input type="number" id="covers" name="covers" min="1" max="200"
+                           class="form-control @error('covers') is-invalid @enderror"
+                           value="{{ old('covers') }}">
+                    @error('covers') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+
+                <div class="mb-3">
                     <label for="notes" class="form-label">Notes</label>
                     <textarea id="notes" name="notes" class="form-control" rows="2">{{ old('notes') }}</textarea>
                 </div>

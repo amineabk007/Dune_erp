@@ -39,4 +39,20 @@ class OrderItem extends Model
     {
         return $this->belongsTo(User::class, 'status_changed_by');
     }
+
+    /**
+     * The tax-inclusive price the customer actually pays — `unit_price`
+     * and `line_total` are stored tax-exclusive so the order's subtotal/
+     * tax/total breakdown stays consistent, but any customer-facing
+     * display (POS catalogue, ticket, receipt) must show the menu price.
+     */
+    public function unitPriceTtc(): float
+    {
+        return round((float) $this->unit_price * (1 + (float) $this->tax_rate / 100), 2);
+    }
+
+    public function lineTotalTtc(): float
+    {
+        return round((float) $this->line_total * (1 + (float) $this->tax_rate / 100), 2);
+    }
 }

@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Dune ERP') }} @hasSection('title')&mdash; @yield('title')@endif</title>
+    <script>
+        // Applied before the stylesheet loads so the page never flashes the wrong theme.
+        (function () {
+            var stored = localStorage.getItem('dune-theme');
+            var theme = stored || 'light';
+            document.documentElement.setAttribute('data-bs-theme', theme);
+        })();
+    </script>
     @vite(['resources/scss/app.scss', 'resources/js/app.js'])
     @livewireStyles
     @stack('styles')
@@ -213,7 +221,7 @@
         </nav>
 
         <div class="flex-grow-1" style="min-width: 0;">
-            <header class="border-bottom bg-white">
+            <header class="border-bottom bg-body">
                 <div class="d-flex justify-content-between align-items-center px-4 py-2">
                     <div class="d-flex align-items-center gap-2">
                         <button type="button" class="btn btn-outline-secondary d-lg-none"
@@ -223,6 +231,9 @@
                         <h1 class="h5 mb-0">@yield('title', 'Dashboard')</h1>
                     </div>
                     <div class="d-flex align-items-center gap-3">
+                        <button type="button" id="dune-theme-toggle" class="btn btn-outline-secondary btn-sm" aria-label="Changer de thème">
+                            <span id="dune-theme-icon">🌙</span>
+                        </button>
                         <span class="text-muted small">
                             {{ auth()->user()->name }}
                             @foreach (auth()->user()->getRoleNames() as $roleName)
@@ -326,6 +337,26 @@
                     window.dispatchEvent(new CustomEvent('dune-notify-show', { detail: { message: message } }));
                     window.duneStartAlertSound();
                 });
+            });
+        })();
+    </script>
+    <script>
+        (function () {
+            const toggle = document.getElementById('dune-theme-toggle');
+            const icon = document.getElementById('dune-theme-icon');
+
+            function applyIcon(theme) {
+                icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+            }
+
+            applyIcon(document.documentElement.getAttribute('data-bs-theme') || 'light');
+
+            toggle.addEventListener('click', function () {
+                const current = document.documentElement.getAttribute('data-bs-theme') || 'light';
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-bs-theme', next);
+                localStorage.setItem('dune-theme', next);
+                applyIcon(next);
             });
         })();
     </script>

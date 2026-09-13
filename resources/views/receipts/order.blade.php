@@ -16,7 +16,7 @@
         @foreach ($order->items->where('status', '!=', 'cancelled') as $item)
             <tr>
                 <td>{{ $item->quantity }} × {{ $item->product_name }}</td>
-                <td class="right">{{ number_format($item->line_total, 2) }}</td>
+                <td class="right">{{ number_format($item->lineTotalTtc(), 2) }}</td>
             </tr>
         @endforeach
     </table>

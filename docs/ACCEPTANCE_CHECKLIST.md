@@ -175,6 +175,16 @@ phase.
       carte centrée sur fond assombri, contour pulsé, au lieu d'un petit
       encart en coin d'écran.
 
+## Mode sombre, couverts et TVA (V1.7)
+
+- [x] Un bouton dans l'en-tête bascule entre mode clair et mode sombre,
+      choix mémorisé par navigateur.
+- [x] Le nombre de couverts se saisit à la création d'une commande et
+      apparaît comme KPI sur le tableau de bord.
+- [x] Les prix affichés pendant la prise de commande (catalogue, ticket,
+      addition) sont ceux de la carte (TTC), pas le prix hors taxe.
+- [x] "Envoyer en cuisine/bar" redirige vers le plan de salle.
+
 ## Hors périmètre V1 (assumé, à considérer pour une V2)
 
 Ces points ont été identifiés pendant le développement mais

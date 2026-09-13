@@ -92,6 +92,18 @@ class ReportingTest extends TestCase
         $response->assertSee('CA du jour');
     }
 
+    public function test_dashboard_kpis_include_todays_covers(): void
+    {
+        app(OrderService::class)->createOrder($this->manager, null, null, null, 4);
+        app(OrderService::class)->createOrder($this->manager, null, null, null, 2);
+        $cancelled = app(OrderService::class)->createOrder($this->manager, null, null, null, 10);
+        $cancelled->update(['status' => 'cancelled']);
+
+        $kpis = app(ReportService::class)->dashboardKpis();
+
+        $this->assertSame(6, $kpis['today_covers']);
+    }
+
     public function test_dashboard_hides_kpis_for_a_role_without_reports_view(): void
     {
         $serveur = User::factory()->create();

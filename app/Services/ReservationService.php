@@ -145,7 +145,7 @@ class ReservationService
         $table = $reservation->tables()->first();
 
         return DB::transaction(function () use ($reservation, $user, $table) {
-            $order = $this->orders->createOrder($user, $table?->id, $reservation->customer_id, null);
+            $order = $this->orders->createOrder($user, $table?->id, $reservation->customer_id, null, $reservation->guests);
 
             $reservation->update(['order_id' => $order->id]);
 

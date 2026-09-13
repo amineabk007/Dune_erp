@@ -567,6 +567,31 @@ Trois améliorations d'interface validées sur maquette avant développement.
   restent verts ; vérifié en navigateur réel (Playwright) sur mobile et
   desktop, transfert d'article via le nouveau menu cherchable inclus.
 
+### Phase 20 — Mode sombre, couverts, TVA affichée, envoi direct au plan de salle ✅ Implémentée et testée
+
+Quatre ajustements demandés après usage réel de l'écran de caisse.
+
+- Un bouton 🌙/☀️ dans l'en-tête bascule l'application entre mode clair
+  et mode sombre (variables de couleur Bootstrap 5.3), mémorisé par
+  navigateur (`localStorage`) et appliqué avant même le premier rendu
+  pour éviter tout flash du mauvais thème.
+- Le nombre de couverts se saisit à la création d'une commande (repris
+  automatiquement du nombre de convives lors de la transformation d'une
+  réservation en commande) et apparaît en KPI "Couverts aujourd'hui" sur
+  le tableau de bord.
+- Tous les prix visibles pendant la prise de commande (catalogue,
+  ticket, addition imprimée) affichent désormais le prix TTC — celui de
+  la carte papier — au lieu du prix hors taxe stocké en base ; le calcul
+  du sous-total/TVA/total au bas du ticket, lui, reste inchangé (déjà
+  correct).
+- Cliquer sur "Envoyer en cuisine/bar" redirige automatiquement vers le
+  plan de salle au lieu de rester sur l'écran de commande.
+- 5 tests supplémentaires (164 au total, tous verts contre MySQL réel),
+  plus une vérification de bout en bout en navigateur réel (Playwright) :
+  bascule de thème persistée après rechargement, prix HT stocké (36.36 DH
+  + 10% TVA) affiché correctement à 40.00 DH partout, redirection
+  confirmée après envoi en production.
+
 ## Licence
 
 Projet propriétaire — Dune Rooftop Marrakech.

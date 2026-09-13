@@ -206,12 +206,15 @@ class OrderBuilder extends Component
 
         try {
             app(OrderService::class)->sendToProduction($this->order);
-            $this->status = 'Commande envoyée en cuisine/bar.';
         } catch (DomainException $e) {
             $this->error = $e->getMessage();
+            $this->refreshOrder();
+
+            return;
         }
 
-        $this->refreshOrder();
+        session()->flash('status', 'Commande envoyée en cuisine/bar.');
+        $this->redirect(route('floor-plan.index'));
     }
 
     public function markServed(): void

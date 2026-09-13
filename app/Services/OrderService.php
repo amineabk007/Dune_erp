@@ -14,9 +14,9 @@ class OrderService
 {
     public function __construct(private readonly AuditService $audit) {}
 
-    public function createOrder(User $user, ?int $tableId, ?int $customerId, ?string $notes): Order
+    public function createOrder(User $user, ?int $tableId, ?int $customerId, ?string $notes, ?int $covers = null): Order
     {
-        return DB::transaction(function () use ($user, $tableId, $customerId, $notes) {
+        return DB::transaction(function () use ($user, $tableId, $customerId, $notes, $covers) {
             if ($tableId) {
                 $table = RestaurantTable::lockForUpdate()->findOrFail($tableId);
                 if (! in_array($table->status, ['available', 'reserved'], true)) {
@@ -27,6 +27,7 @@ class OrderService
             $order = Order::create([
                 'table_id' => $tableId,
                 'customer_id' => $customerId,
+                'covers' => $covers,
                 'user_id' => $user->id,
                 'status' => 'open',
                 'notes' => $notes,
