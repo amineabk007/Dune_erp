@@ -607,6 +607,26 @@ Quatre ajustements demandés après usage réel de l'écran de caisse.
   plus une vérification en navigateur réel (Playwright) : badge de
   statut visible sur le plan de salle après envoi en production.
 
+### Phase 22 — Installation en application (PWA) et écran par défaut selon le rôle ✅ Implémentée et testée
+
+Pour les futures tablettes bar/cuisine/serveurs (et la caisse tactile
+existante) : Dune ERP peut s'installer comme une vraie application,
+sans jamais afficher le navigateur.
+
+- Manifeste web + icône + service worker minimal : sur Chrome/Edge,
+  "Installer la page en tant qu'application" ajoute une icône Dune ERP
+  au bureau/écran d'accueil, qui s'ouvre ensuite en fenêtre autonome
+  (sans barre d'adresse). Aucune installation par store, aucun coût.
+- Un compte n'ayant qu'un rôle opérationnel (cuisine, bar, caissier,
+  serveur) est envoyé directement sur son écran dédié après connexion
+  (PIN ou email/mot de passe) au lieu du tableau de bord général — un
+  compte admin/manager/direction/comptable/stock continue de voir le
+  tableau de bord complet, même s'il détient aussi un rôle opérationnel.
+  Un lien profond (deep link) reste prioritaire sur ce choix par défaut.
+- 7 tests supplémentaires (176 au total, tous verts contre MySQL réel),
+  plus vérification en navigateur réel (Playwright) : manifeste lié,
+  service worker enregistré sans erreur, icônes servies correctement.
+
 ## Licence
 
 Projet propriétaire — Dune Rooftop Marrakech.

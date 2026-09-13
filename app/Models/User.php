@@ -79,4 +79,27 @@ class User extends Authenticatable
             ->get()
             ->first(fn (self $user) => Hash::check($pin, $user->pin));
     }
+
+    /**
+     * Where a device should land right after login. Management roles
+     * (admin/manager/direction/comptable/stock) always get the full
+     * dashboard, even if they also hold an operational role — they need
+     * the overview, not a single tablet's screen. A single-purpose
+     * tablet (kitchen, bar, cashier, floor) is expected to be logged
+     * into with a staff account that holds only that one role.
+     */
+    public function defaultLandingRoute(): string
+    {
+        if ($this->hasAnyRole(['admin', 'manager', 'direction', 'comptable', 'stock'])) {
+            return route('dashboard');
+        }
+
+        return match (true) {
+            $this->hasRole('cuisine') => route('kitchen.index'),
+            $this->hasRole('bar') => route('bar.index'),
+            $this->hasRole('caissier') => route('orders.index'),
+            $this->hasRole('serveur') => route('floor-plan.index'),
+            default => route('dashboard'),
+        };
+    }
 }

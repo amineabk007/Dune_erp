@@ -193,6 +193,18 @@ phase.
 - [x] Le tableau de bord affiche le temps moyen entre l'envoi en
       cuisine/bar et le passage à "servie" pour les commandes du jour.
 
+## Installation en application et écran par défaut (V1.9)
+
+- [x] L'application peut être installée comme une app (manifeste +
+      icône + service worker), ouverture en fenêtre autonome sans
+      barre de navigateur.
+- [x] Un compte avec un seul rôle opérationnel (cuisine/bar/caissier/
+      serveur) arrive directement sur son écran dédié après connexion.
+- [x] Un compte admin/manager/direction/comptable/stock arrive toujours
+      sur le tableau de bord complet.
+- [x] Un lien profond (deep link) reste prioritaire sur l'écran par
+      défaut du rôle.
+
 ## Hors périmètre V1 (assumé, à considérer pour une V2)
 
 Ces points ont été identifiés pendant le développement mais

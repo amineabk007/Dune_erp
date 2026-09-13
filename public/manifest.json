@@ -1,0 +1,15 @@
+{
+    "name": "Dune ERP",
+    "short_name": "Dune ERP",
+    "description": "Gestion de salle, cuisine, bar et caisse — Dune Rooftop Marrakech",
+    "start_url": "/pin-login",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#faf6ef",
+    "theme_color": "#221c17",
+    "orientation": "any",
+    "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+        { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    ]
+}

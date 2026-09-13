@@ -24,7 +24,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->user()->forceFill(['last_login_at' => now()])->save();
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended($request->user()->defaultLandingRoute());
     }
 
     public function destroy(Request $request): RedirectResponse
