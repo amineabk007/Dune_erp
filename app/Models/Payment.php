@@ -9,6 +9,13 @@ class Payment extends Model
 {
     public const METHODS = ['cash', 'card', 'transfer', 'other'];
 
+    private const METHOD_LABELS = [
+        'cash' => 'Espèces',
+        'card' => 'Carte',
+        'transfer' => 'Virement',
+        'other' => 'Autre',
+    ];
+
     protected $fillable = [
         'order_id', 'cash_session_id', 'method', 'amount', 'received_by',
         'refunded', 'refunded_at', 'refunded_by', 'refund_reason', 'reference',
@@ -41,5 +48,10 @@ class Payment extends Model
     public function refundedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'refunded_by');
+    }
+
+    public function methodLabel(): string
+    {
+        return self::METHOD_LABELS[$this->method] ?? $this->method;
     }
 }

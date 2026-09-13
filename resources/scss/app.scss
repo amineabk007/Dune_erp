@@ -204,7 +204,23 @@ $font-family-sans-serif: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
 
     .dune-pos-cats {
         width: auto;
+        min-width: 0;
         flex-direction: row;
         overflow-x: auto;
     }
+}
+
+// Bootstrap's own dark-mode palette leaves outline-secondary buttons (used
+// all over the app, including "Déconnexion") at low contrast against a
+// near-black background — brighten them explicitly.
+[data-bs-theme='dark'] .btn-outline-secondary {
+    color: $light;
+    border-color: rgba($light, 0.5);
+}
+
+[data-bs-theme='dark'] .btn-outline-secondary:hover,
+[data-bs-theme='dark'] .btn-outline-secondary:focus {
+    background: rgba($light, 0.12);
+    color: $light;
+    border-color: rgba($light, 0.6);
 }

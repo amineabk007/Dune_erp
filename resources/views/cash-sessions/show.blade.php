@@ -92,7 +92,7 @@
                     @forelse ($session->payments as $payment)
                         <li class="list-group-item d-flex justify-content-between">
                             <span>
-                                Commande {{ $payment->order->order_number }} — {{ $payment->method }}
+                                Commande {{ $payment->order->order_number }} — {{ $payment->methodLabel() }}
                                 @if ($payment->refunded)
                                     <span class="badge text-bg-danger badge-status">remboursé</span>
                                 @endif

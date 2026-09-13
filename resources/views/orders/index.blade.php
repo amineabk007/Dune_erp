@@ -15,7 +15,7 @@
             <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                 <option value="">Commandes actives</option>
                 @foreach (\App\Models\Order::STATUSES as $status)
-                    <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ $status }}</option>
+                    <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>{{ \App\Models\Order::labelForStatus($status) }}</option>
                 @endforeach
             </select>
         </div>
@@ -39,7 +39,7 @@
                     <td>{{ $order->order_number }}</td>
                     <td>{{ $order->table->name ?? 'Vente directe' }}</td>
                     <td>{{ $order->server->name }}</td>
-                    <td><span class="badge text-bg-secondary badge-status">{{ $order->status }}</span></td>
+                    <td><span class="badge text-bg-secondary badge-status">{{ $order->statusLabel() }}</span></td>
                     <td>{{ number_format($order->total, 2) }} DH</td>
                     <td>{{ number_format($order->amount_paid, 2) }} DH</td>
                     <td class="text-end">

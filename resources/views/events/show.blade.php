@@ -123,8 +123,8 @@
                         @forelse ($event->payments as $payment)
                             <tr>
                                 <td>{{ $payment->created_at->format('d/m/Y H:i') }}</td>
-                                <td class="text-capitalize">{{ $payment->type }}</td>
-                                <td class="text-capitalize">{{ $payment->method }}</td>
+                                <td>{{ $payment->typeLabel() }}</td>
+                                <td>{{ $payment->methodLabel() }}</td>
                                 <td class="text-end">{{ number_format($payment->amount, 2) }} DH</td>
                             </tr>
                         @empty

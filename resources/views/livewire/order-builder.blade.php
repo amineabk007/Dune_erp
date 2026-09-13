@@ -1,6 +1,6 @@
 <div>
     <div class="d-flex justify-content-end mb-2">
-        <span class="badge text-bg-secondary badge-status fs-6">{{ $order->status }}</span>
+        <span class="badge text-bg-secondary badge-status fs-6">{{ $order->statusLabel() }}</span>
     </div>
 
     @if ($status)
@@ -24,7 +24,7 @@
                 @forelse ($this->items as $item)
                     <li class="list-group-item d-flex justify-content-between">
                         <span>{{ $item->quantity }} × {{ $item->product_name }}
-                            <span class="badge text-bg-light border badge-status">{{ $item->status }}</span>
+                            <span class="badge text-bg-light border badge-status">{{ $item->statusLabel() }}</span>
                         </span>
                         <span>{{ number_format($item->lineTotalTtc(), 2) }} DH</span>
                     </li>
@@ -121,8 +121,8 @@
                                         <div class="fw-semibold">{{ $item->product_name }}</div>
                                         <div class="text-muted small">
                                             {{ number_format($item->unitPriceTtc(), 2) }} DH ·
-                                            <span class="badge text-bg-light border badge-status">{{ $item->status }}</span>
-                                            <span class="badge text-bg-light border badge-status">{{ $item->destination }}</span>
+                                            <span class="badge text-bg-light border badge-status">{{ $item->statusLabel() }}</span>
+                                            <span class="badge text-bg-light border badge-status">{{ $item->destinationLabel() }}</span>
                                         </div>
                                     </div>
                                     <div class="text-end">
@@ -142,8 +142,10 @@
                                 </div>
                                 @can('orders.transfer_item')
                                     @if ($this->transferableTables->isNotEmpty())
-                                        <div class="d-flex gap-1 mt-2">
-                                            <select wire:model="transferTargets.{{ $item->id }}" wire:ignore
+                                        <div class="mt-2">
+                                            <select wire:model="transferTargets.{{ $item->id }}"
+                                                    wire:change="transferItem({{ $item->id }})"
+                                                    wire:ignore
                                                     class="form-select form-select-sm">
                                                 <option value="">Transférer vers…</option>
                                                 @foreach ($this->transferableTables as $table)
@@ -152,9 +154,6 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            <button type="button" class="btn btn-outline-secondary btn-sm" wire:click="transferItem({{ $item->id }})">
-                                                OK
-                                            </button>
                                         </div>
                                     @endif
                                 @endcan
@@ -236,7 +235,7 @@
                 @foreach ($this->payments as $payment)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <span>
-                            {{ $payment->method }} — {{ number_format($payment->amount, 2) }} DH
+                            {{ $payment->methodLabel() }} — {{ number_format($payment->amount, 2) }} DH
                             par {{ $payment->receivedBy->name }}
                             @if ($payment->refunded)
                                 <span class="badge text-bg-danger badge-status">remboursé</span>

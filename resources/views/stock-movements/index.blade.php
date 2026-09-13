@@ -32,7 +32,7 @@
                 <tr>
                     <td>{{ $movement->created_at->format('d/m/Y H:i') }}</td>
                     <td><a href="{{ route('ingredients.show', $movement->ingredient) }}">{{ $movement->ingredient->name }}</a></td>
-                    <td><span class="badge text-bg-secondary badge-status">{{ $movement->type }}</span></td>
+                    <td><span class="badge text-bg-secondary badge-status">{{ $movement->typeLabel() }}</span></td>
                     <td class="{{ $movement->quantity >= 0 ? 'text-success' : 'text-danger' }}">
                         {{ $movement->quantity >= 0 ? '+' : '' }}{{ number_format($movement->quantity, 3) }}
                     </td>

@@ -81,7 +81,7 @@ class PinLoginTest extends TestCase
 
         $response->assertSessionHasErrors('pin');
         $this->assertStringContainsString(
-            'Too many login attempts',
+            'Trop de tentatives de connexion',
             collect(session('errors')->get('pin'))->first()
         );
 

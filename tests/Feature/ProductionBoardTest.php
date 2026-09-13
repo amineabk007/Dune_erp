@@ -39,7 +39,7 @@ class ProductionBoardTest extends TestCase
         Livewire::test(ProductionBoard::class, ['destination' => 'kitchen'])
             ->assertSee($product->name)
             ->call('advance', $item->id, 'preparing')
-            ->assertSee('preparing');
+            ->assertSee('En préparation');
 
         $this->assertSame('preparing', $item->fresh()->status);
     }

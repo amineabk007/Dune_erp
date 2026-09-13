@@ -205,6 +205,16 @@ phase.
 - [x] Un lien profond (deep link) reste prioritaire sur l'écran par
       défaut du rôle.
 
+## Corrections post-test complet (V1.10)
+
+- [x] Transfert d'article vers une autre table en un seul geste (choix
+      dans le menu = transfert immédiat, sans bouton "OK" séparé).
+- [x] Interface entièrement en français, y compris messages système,
+      statuts, mode de paiement et dates relatives.
+- [x] Aucun débordement/défilement horizontal sur mobile (catalogue
+      POS, en-tête) ni sur tablette (menu de transfert du plan de salle).
+- [x] Mode sombre : tous les boutons restent lisibles.
+
 ## Hors périmètre V1 (assumé, à considérer pour une V2)
 
 Ces points ont été identifiés pendant le développement mais

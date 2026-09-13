@@ -21,7 +21,7 @@
                         <div class="card h-100 border-{{ $item->status === 'ready' ? 'success' : ($item->status === 'preparing' ? 'warning' : 'secondary') }}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
-                                    <span class="badge text-bg-light border badge-status">{{ $item->status }}</span>
+                                    <span class="badge text-bg-light border badge-status">{{ $item->statusLabel() }}</span>
                                 </div>
                                 <p class="text-muted small mb-1">
                                     envoyé {{ $item->status_changed_at?->diffForHumans() ?? $item->created_at->diffForHumans() }}

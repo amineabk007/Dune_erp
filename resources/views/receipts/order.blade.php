@@ -36,7 +36,7 @@
         <table>
             @foreach ($order->payments as $payment)
                 <tr>
-                    <td>{{ $payment->method }} @if ($payment->refunded) (remboursé) @endif</td>
+                    <td>{{ $payment->methodLabel() }} @if ($payment->refunded) (remboursé) @endif</td>
                     <td class="right">{{ number_format($payment->amount, 2) }} DH</td>
                 </tr>
             @endforeach

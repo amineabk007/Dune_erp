@@ -10,6 +10,16 @@ class Order extends Model
 {
     public const STATUSES = ['open', 'sent', 'preparing', 'ready', 'served', 'paid', 'cancelled'];
 
+    public const STATUS_LABELS = [
+        'open' => 'Ouverte',
+        'sent' => 'Envoyée',
+        'preparing' => 'En préparation',
+        'ready' => 'Prête',
+        'served' => 'Servie',
+        'paid' => 'Payée',
+        'cancelled' => 'Annulée',
+    ];
+
     protected $fillable = [
         'order_number', 'table_id', 'customer_id', 'covers', 'user_id', 'status',
         'sent_at', 'served_at',
@@ -75,5 +85,15 @@ class Order extends Model
     public function isPaid(): bool
     {
         return $this->status === 'paid';
+    }
+
+    public function statusLabel(): string
+    {
+        return self::STATUS_LABELS[$this->status] ?? $this->status;
+    }
+
+    public static function labelForStatus(string $status): string
+    {
+        return self::STATUS_LABELS[$status] ?? $status;
     }
 }

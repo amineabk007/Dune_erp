@@ -11,13 +11,6 @@
             'cleaning' => 'secondary',
             'inactive' => 'dark',
         ];
-        $orderStatusLabels = [
-            'open' => 'Ouverte',
-            'sent' => 'Envoyée',
-            'preparing' => 'En préparation',
-            'ready' => 'Prête',
-            'served' => 'Servie',
-        ];
         $orderStatusColors = [
             'open' => 'secondary',
             'sent' => 'info',
@@ -37,12 +30,12 @@
                         <div class="card-body text-center p-2">
                             <div class="fw-bold">{{ $table->name }}</div>
                             <div class="text-muted small">{{ $table->capacity }} pers.</div>
-                            <span class="badge text-bg-{{ $statusColors[$table->status] }} badge-status my-1">{{ $table->status }}</span>
+                            <span class="badge text-bg-{{ $statusColors[$table->status] }} badge-status my-1">{{ $table->statusLabel() }}</span>
 
                             @if ($order)
                                 <div>
                                     <span class="badge text-bg-{{ $orderStatusColors[$order->status] ?? 'secondary' }} badge-status">
-                                        {{ $orderStatusLabels[$order->status] ?? $order->status }}
+                                        {{ $order->statusLabel() }}
                                     </span>
                                 </div>
                                 <div class="text-muted small" data-occupied-since="{{ $order->created_at->toIso8601String() }}" data-elapsed>&nbsp;</div>
@@ -68,7 +61,7 @@
 
                             @if ($order)
                                 @can('orders.update')
-                                    <form method="POST" action="{{ route('floor-plan.transfer', $table) }}" class="d-flex gap-1 mt-1">
+                                    <form method="POST" action="{{ route('floor-plan.transfer', $table) }}" class="d-flex flex-column gap-1 mt-1">
                                         @csrf
                                         <select name="new_table_id" class="form-select form-select-sm">
                                             <option value="">Transférer vers…</option>
@@ -80,7 +73,7 @@
                                                 @endforeach
                                             @endforeach
                                         </select>
-                                        <button type="submit" class="btn btn-outline-secondary btn-sm">OK</button>
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm w-100">OK</button>
                                     </form>
                                 @endcan
                             @endif

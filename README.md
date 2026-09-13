@@ -627,6 +627,37 @@ sans jamais afficher le navigateur.
   plus vérification en navigateur réel (Playwright) : manifeste lié,
   service worker enregistré sans erreur, icônes servies correctement.
 
+### Phase 23 — Corrections suite au test complet du parcours personnel ✅ Implémentée et testée
+
+Un passage de test complet sur tout le parcours opérationnel (PIN,
+plan de salle, POS, cuisine, bar, encaissement, dashboard) a remonté
+plusieurs problèmes, tous corrigés :
+
+- **Transfert d'article qui ne répondait qu'au 2ᵉ clic sur "OK"** :
+  le bouton entrait en conflit avec la fermeture du menu déroulant.
+  Le transfert se déclenche maintenant dès qu'on choisit la table dans
+  le menu — plus de bouton, plus de double-clic nécessaire.
+- **Toute l'application était en anglais côté messages système** (
+  `APP_LOCALE=en` par défaut) : les statuts de table/commande/article,
+  le mode de paiement, les dates relatives ("il y a 5 jours") et les
+  messages d'erreur de connexion s'affichaient en anglais malgré une
+  interface écrite en français. Bascule sur le français par défaut,
+  avec des traductions ajoutées pour les validations et l'authentification.
+- **Le menu "Transférer vers…" débordait de sa carte** sur le plan de
+  salle (largeur tablette) : passé en disposition verticale, ne déborde
+  plus.
+- **Le catalogue POS causait un défilement horizontal de toute la page
+  sur téléphone** : corrigé (largeur minimale du bandeau de catégories),
+  ainsi qu'un débordement similaire, plus discret, sur la ligne d'en-tête
+  (nom d'utilisateur + bouton mode sombre + déconnexion) qui ne repassait
+  pas à la ligne sur petit écran.
+- **Bouton "Déconnexion" peu lisible en mode sombre** : contraste corrigé
+  pour tous les boutons de ce style en mode sombre.
+- 7 tests supplémentaires (182 au total, tous verts contre MySQL réel),
+  plus vérification en navigateur réel (Playwright) : transfert en un
+  seul geste confirmé, absence de défilement horizontal confirmée sur
+  mobile, lisibilité du mode sombre confirmée.
+
 ## Licence
 
 Projet propriétaire — Dune Rooftop Marrakech.

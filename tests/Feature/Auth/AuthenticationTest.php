@@ -71,7 +71,7 @@ class AuthenticationTest extends TestCase
 
         $response->assertSessionHasErrors('email');
         $this->assertStringContainsString(
-            'Too many login attempts',
+            'Trop de tentatives de connexion',
             collect(session('errors')->get('email'))->first()
         );
 

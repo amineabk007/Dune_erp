@@ -12,10 +12,28 @@ class RestaurantTable extends Model
 
     public const STATUSES = ['available', 'occupied', 'reserved', 'cleaning', 'inactive'];
 
+    public const STATUS_LABELS = [
+        'available' => 'Disponible',
+        'occupied' => 'Occupée',
+        'reserved' => 'Réservée',
+        'cleaning' => 'Nettoyage',
+        'inactive' => 'Inactive',
+    ];
+
     protected $fillable = ['zone_id', 'name', 'capacity', 'status'];
 
     public function zone(): BelongsTo
     {
         return $this->belongsTo(Zone::class);
+    }
+
+    public function statusLabel(): string
+    {
+        return self::STATUS_LABELS[$this->status] ?? $this->status;
+    }
+
+    public static function labelForStatus(string $status): string
+    {
+        return self::STATUS_LABELS[$status] ?? $status;
     }
 }

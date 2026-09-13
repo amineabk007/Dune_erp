@@ -11,6 +11,19 @@ class EventPayment extends Model
 
     public const METHODS = ['cash', 'card', 'transfer', 'other'];
 
+    private const TYPE_LABELS = [
+        'deposit' => 'Acompte',
+        'balance' => 'Solde',
+        'other' => 'Autre',
+    ];
+
+    private const METHOD_LABELS = [
+        'cash' => 'Espèces',
+        'card' => 'Carte',
+        'transfer' => 'Virement',
+        'other' => 'Autre',
+    ];
+
     protected $fillable = ['event_id', 'type', 'method', 'amount', 'received_by', 'reference'];
 
     protected function casts(): array
@@ -26,5 +39,15 @@ class EventPayment extends Model
     public function receivedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'received_by');
+    }
+
+    public function typeLabel(): string
+    {
+        return self::TYPE_LABELS[$this->type] ?? $this->type;
+    }
+
+    public function methodLabel(): string
+    {
+        return self::METHOD_LABELS[$this->method] ?? $this->method;
     }
 }

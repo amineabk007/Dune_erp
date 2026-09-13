@@ -14,7 +14,7 @@
                         <p class="mb-0 text-muted">{{ $reservation->notes }}</p>
                     @endif
                 </div>
-                <span class="badge text-bg-secondary badge-status fs-6">{{ $reservation->status }}</span>
+                <span class="badge text-bg-secondary badge-status fs-6">{{ $reservation->statusLabel() }}</span>
             </div>
         </div>
     </div>

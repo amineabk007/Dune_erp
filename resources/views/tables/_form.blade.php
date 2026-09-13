@@ -30,7 +30,7 @@
         <label for="status" class="form-label">Statut</label>
         <select id="status" name="status" class="form-select @error('status') is-invalid @enderror">
             @foreach (\App\Models\RestaurantTable::STATUSES as $status)
-                <option value="{{ $status }}" {{ old('status', $table->status) === $status ? 'selected' : '' }}>{{ $status }}</option>
+                <option value="{{ $status }}" {{ old('status', $table->status) === $status ? 'selected' : '' }}>{{ \App\Models\RestaurantTable::labelForStatus($status) }}</option>
             @endforeach
         </select>
         @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror

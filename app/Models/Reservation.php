@@ -14,6 +14,15 @@ class Reservation extends Model
 
     public const STATUSES = ['pending', 'confirmed', 'seated', 'completed', 'cancelled', 'no_show'];
 
+    private const STATUS_LABELS = [
+        'pending' => 'En attente',
+        'confirmed' => 'Confirmée',
+        'seated' => 'Installée',
+        'completed' => 'Terminée',
+        'cancelled' => 'Annulée',
+        'no_show' => 'Non présentée',
+    ];
+
     /**
      * How long a reservation blocks its table(s) for conflict detection.
      */
@@ -49,5 +58,10 @@ class Reservation extends Model
     public function endsAt(): Carbon
     {
         return $this->reserved_at->clone()->addMinutes(self::DURATION_MINUTES);
+    }
+
+    public function statusLabel(): string
+    {
+        return self::STATUS_LABELS[$this->status] ?? $this->status;
     }
 }

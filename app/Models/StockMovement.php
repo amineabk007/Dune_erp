@@ -11,6 +11,15 @@ class StockMovement extends Model
 
     public const TYPES = ['purchase', 'sale_consumption', 'adjustment', 'waste', 'return', 'transfer'];
 
+    private const TYPE_LABELS = [
+        'purchase' => 'Achat',
+        'sale_consumption' => 'Consommation vente',
+        'adjustment' => 'Ajustement',
+        'waste' => 'Perte',
+        'return' => 'Retour',
+        'transfer' => 'Transfert',
+    ];
+
     protected $fillable = ['ingredient_id', 'type', 'quantity', 'unit_cost', 'reference', 'reason', 'user_id'];
 
     protected function casts(): array
@@ -47,5 +56,10 @@ class StockMovement extends Model
     public function delete()
     {
         throw new \LogicException('Stock movements are immutable and cannot be deleted.');
+    }
+
+    public function typeLabel(): string
+    {
+        return self::TYPE_LABELS[$this->type] ?? $this->type;
     }
 }

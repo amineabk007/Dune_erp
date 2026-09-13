@@ -9,6 +9,20 @@ class OrderItem extends Model
 {
     public const STATUSES = ['new', 'sent', 'preparing', 'ready', 'served', 'cancelled'];
 
+    private const STATUS_LABELS = [
+        'new' => 'Nouveau',
+        'sent' => 'Envoyé',
+        'preparing' => 'En préparation',
+        'ready' => 'Prêt',
+        'served' => 'Servi',
+        'cancelled' => 'Annulé',
+    ];
+
+    private const DESTINATION_LABELS = [
+        'kitchen' => 'Cuisine',
+        'bar' => 'Bar',
+    ];
+
     protected $fillable = [
         'order_id', 'product_id', 'product_name', 'unit_price', 'tax_rate', 'destination',
         'quantity', 'line_total', 'notes', 'kitchen_note',
@@ -54,5 +68,15 @@ class OrderItem extends Model
     public function lineTotalTtc(): float
     {
         return round((float) $this->line_total * (1 + (float) $this->tax_rate / 100), 2);
+    }
+
+    public function statusLabel(): string
+    {
+        return self::STATUS_LABELS[$this->status] ?? $this->status;
+    }
+
+    public function destinationLabel(): string
+    {
+        return self::DESTINATION_LABELS[$this->destination] ?? $this->destination;
     }
 }

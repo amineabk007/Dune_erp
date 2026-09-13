@@ -34,7 +34,7 @@
                     <td>{{ $reservation->customer->name }}</td>
                     <td>{{ $reservation->guests }}</td>
                     <td>{{ $reservation->tables->pluck('name')->join(', ') }}</td>
-                    <td><span class="badge text-bg-secondary badge-status">{{ $reservation->status }}</span></td>
+                    <td><span class="badge text-bg-secondary badge-status">{{ $reservation->statusLabel() }}</span></td>
                     <td class="text-end">
                         <a href="{{ route('reservations.show', $reservation) }}" class="btn btn-outline-secondary btn-sm">Détails</a>
                     </td>
