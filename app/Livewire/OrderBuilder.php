@@ -18,6 +18,15 @@ use Livewire\Component;
 
 class OrderBuilder extends Component
 {
+    /**
+     * A fixed palette (Dune's own brand colors) so each category always
+     * gets the same button color, giving the catalogue the look of a
+     * professional touch-screen till instead of a plain product list.
+     */
+    private const CATEGORY_COLORS = [
+        '#b3652b', '#6b5a4a', '#4a7c59', '#3f7d92', '#8a5a3a', '#4d6b52',
+    ];
+
     public Order $order;
 
     public string $search = '';
@@ -110,6 +119,11 @@ class OrderBuilder extends Component
             ->filter()
             ->unique('id')
             ->sortBy('name');
+    }
+
+    public function categoryColor(int $categoryId): string
+    {
+        return self::CATEGORY_COLORS[$categoryId % count(self::CATEGORY_COLORS)];
     }
 
     public function addProduct(int $productId): void

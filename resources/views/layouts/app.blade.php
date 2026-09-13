@@ -269,16 +269,16 @@
     <div
         x-data="{ show: false, message: '' }"
         x-show="show"
-        style="display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 2000;"
+        style="display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(15, 12, 10, 0.6);"
         x-on:dune-notify-show.window="show = true; message = $event.detail.message"
     >
-        <div class="d-flex justify-content-center">
-            <div class="alert alert-warning shadow-lg m-3 d-flex align-items-center gap-3" style="max-width: 480px;">
-                <span class="fs-4">🔔</span>
-                <span class="flex-grow-1" x-text="message"></span>
+        <div class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+            <div class="dune-notify-card shadow-lg m-3 text-center">
+                <div class="dune-notify-bell">🔔</div>
+                <div class="dune-notify-message" x-text="message"></div>
                 <button
                     type="button"
-                    class="btn btn-dark btn-sm"
+                    class="btn btn-warning btn-lg dune-notify-ok"
                     x-on:click="show = false; window.duneStopAlertSound && window.duneStopAlertSound();"
                 >
                     OK, j'ai vu

@@ -163,6 +163,18 @@ phase.
 - [x] Sur ordinateur/tablette paysage, le menu reste fixe et visible en
       permanence, apparence inchangée.
 
+## Caisse pro, recherche et alertes (V1.6)
+
+- [x] L'écran Commandes/POS affiche les catégories en onglets colorés et
+      les produits en grille de boutons colorés, façon terminal de
+      caisse professionnel, au lieu d'un menu déroulant + liste simple.
+- [x] Tous les menus déroulants de l'application permettent de filtrer
+      en tapant, y compris ceux liés à un composant Livewire (transfert
+      d'article, moyen de paiement).
+- [x] La notification de commande envoyée/prête s'affiche en grande
+      carte centrée sur fond assombri, contour pulsé, au lieu d'un petit
+      encart en coin d'écran.
+
 ## Hors périmètre V1 (assumé, à considérer pour une V2)
 
 Ces points ont été identifiés pendant le développement mais

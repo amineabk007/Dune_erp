@@ -40,39 +40,38 @@
         <div class="row">
             <div class="col-md-7">
                 @can('orders.update')
-                    <div class="card mb-3">
-                        <div class="card-header">Catalogue</div>
-                        <div class="card-body">
-                            <div class="d-flex gap-2 mb-2">
-                                <input type="text" class="form-control form-control-sm" placeholder="Rechercher un produit..."
-                                       wire:model.live.debounce.300ms="search">
-                                <select class="form-select form-select-sm" wire:model.live="categoryFilter" style="max-width: 220px;">
-                                    <option value="">Toutes catégories</option>
+                    <div class="card mb-3 dune-pos-card">
+                        <div class="card-header">
+                            <input type="text" class="form-control form-control-sm" placeholder="Rechercher un produit..."
+                                   wire:model.live.debounce.300ms="search">
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="dune-pos-body">
+                                <div class="dune-pos-cats">
+                                    <button type="button" wire:click="$set('categoryFilter', null)"
+                                            class="dune-pos-cat-btn {{ ! $categoryFilter ? 'active' : '' }}">
+                                        Toutes
+                                    </button>
                                     @foreach ($this->categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="row row-cols-2 row-cols-lg-3 g-2" style="max-height: 420px; overflow-y: auto;">
-                                @forelse ($this->products as $product)
-                                    <div class="col">
-                                        <button type="button" wire:click="addProduct({{ $product->id }})"
-                                                class="btn btn-outline-secondary w-100 h-100 text-start p-2 d-flex gap-2 align-items-center">
-                                            @if ($product->photo_url)
-                                                <img src="{{ $product->photo_url }}" alt="" style="width: 40px; height: 40px; object-fit: cover;" class="rounded flex-shrink-0">
-                                            @else
-                                                <div class="bg-light rounded flex-shrink-0" style="width: 40px; height: 40px;"></div>
-                                            @endif
-                                            <div>
-                                                <div class="fw-semibold small">{{ $product->name }}</div>
-                                                <div class="text-muted small">{{ number_format($product->price, 2) }} DH</div>
-                                            </div>
+                                        <button type="button" wire:click="$set('categoryFilter', {{ $category->id }})"
+                                                class="dune-pos-cat-btn {{ $categoryFilter === $category->id ? 'active' : '' }}">
+                                            {{ $category->name }}
                                         </button>
-                                    </div>
-                                @empty
-                                    <p class="text-muted">Aucun produit trouvé.</p>
-                                @endforelse
+                                    @endforeach
+                                </div>
+
+                                <div class="dune-pos-grid">
+                                    @forelse ($this->products as $product)
+                                        <button type="button" wire:click="addProduct({{ $product->id }})"
+                                                class="dune-pos-prod-btn"
+                                                style="background-color: {{ $this->categoryColor($product->category_id) }};">
+                                            <span class="dune-pos-prod-name">{{ $product->name }}</span>
+                                            <span class="dune-pos-prod-price">{{ number_format($product->price, 2) }} DH</span>
+                                        </button>
+                                    @empty
+                                        <p class="text-muted p-3 mb-0">Aucun produit trouvé.</p>
+                                    @endforelse
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -144,7 +143,8 @@
                                 @can('orders.transfer_item')
                                     @if ($this->transferableTables->isNotEmpty())
                                         <div class="d-flex gap-1 mt-2">
-                                            <select wire:model="transferTargets.{{ $item->id }}" class="form-select form-select-sm">
+                                            <select wire:model="transferTargets.{{ $item->id }}" wire:ignore
+                                                    class="form-select form-select-sm">
                                                 <option value="">Transférer vers…</option>
                                                 @foreach ($this->transferableTables as $table)
                                                     <option value="{{ $table->id }}">
@@ -202,7 +202,7 @@
                             @elseif ((float) $order->balanceDue() > 0)
                                 <div class="row g-2">
                                     <div class="col-auto">
-                                        <select wire:model="paymentMethod" class="form-select form-select-sm">
+                                        <select wire:model="paymentMethod" wire:ignore class="form-select form-select-sm">
                                             <option value="cash">Espèces</option>
                                             <option value="card">Carte</option>
                                             <option value="transfer">Virement</option>

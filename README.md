@@ -543,6 +543,30 @@ coupés, boutons tronqués).
 - Changement d'interface pur (Blade + SCSS) : les 152 tests existants
   restent verts, aucun test supplémentaire nécessaire.
 
+### Phase 19 — Caisse façon terminal pro, dropdowns cherchables, alerte agrandie ✅ Implémentée et testée
+
+Trois améliorations d'interface validées sur maquette avant développement.
+
+- L'écran Commandes/POS remplace le menu déroulant de catégories et la
+  liste de boutons simples par un catalogue façon terminal de caisse
+  professionnel : catégories en onglets colorés sur le côté, grille de
+  produits en boutons colorés (couleur fixe par catégorie, comme les
+  tables sur les écrans cuisine/bar).
+- Tous les menus déroulants de l'application (catégories, ingrédients,
+  tables, fournisseurs, transfert d'article, moyen de paiement...) sont
+  désormais cherchables : taper filtre la liste au lieu de faire défiler
+  des dizaines de lignes. Un menu Livewire (transfert d'article, moyen
+  de paiement) reste synchronisé avec le composant via `wire:ignore` sur
+  le champ, qui laisse la recherche fonctionner sans que Livewire
+  n'écrase le widget à chaque rafraîchissement.
+- La notification de commande envoyée/prête passe d'un petit encart en
+  coin d'écran à une grande carte centrée, contour pulsé, sur fond
+  assombri — impossible à manquer sur un écran de cuisine chargé. Le
+  fonctionnement (son en boucle, fermeture manuelle) est inchangé.
+- Changement d'interface (Blade, SCSS, JS) : les 159 tests existants
+  restent verts ; vérifié en navigateur réel (Playwright) sur mobile et
+  desktop, transfert d'article via le nouveau menu cherchable inclus.
+
 ## Licence
 
 Projet propriétaire — Dune Rooftop Marrakech.
